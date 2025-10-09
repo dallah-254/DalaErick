@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steven's Interactive Portfolio</title>
+    <title>Dallah's Interactive Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -101,7 +101,7 @@
                 <!-- Left Content -->
                 <div class="md:col-span-2 space-y-6">
                     <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
-                        Hi, I'm <span id="hero-name" class="text-accent">Steven</span> <span class="text-4xl">😊</span>
+                        Hi, I'm <span id="hero-name" class="text-accent">Dallah</span> <span class="text-4xl">😊</span>
                     </h1>
                     <p id="hero-description" class="text-lg text-text-muted max-w-2xl">
                         A passionate web developer and graphic designer creating modern, interactive, and beautiful digital experiences. Let's build something amazing together!
@@ -255,7 +255,7 @@
                         <i class="fas fa-envelope text-accent text-2xl mt-1 mr-4"></i>
                         <div>
                             <p class="text-sm text-text-muted">Email:</p>
-                            <p id="contact-email" class="font-medium text-text-light">steven@example.com</p>
+                            <p id="contact-email" class="font-medium text-text-light">Dallah@example.com</p>
                         </div>
                     </div>
                     
@@ -299,7 +299,7 @@
         <div class="main-content mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <div id="footer-logo" class="text-3xl font-black text-text-light mb-4 md:mb-0">LOGO</div>
             <p id="footer-text" class="text-sm text-text-muted">
-                &copy; 2024 Steven. All rights reserved. | Developed with passion.
+                &copy; 2024 Dallah. All rights reserved. | Developed with passion.
             </p>
             <a href="#home" class="text-accent text-lg hover:opacity-80 transition duration-200 mt-4 md:mt-0">
                 <i class="fas fa-arrow-up"></i>
@@ -318,7 +318,7 @@
                 
                 // Update hero section
                 if (data.hero) {
-                    document.getElementById('hero-name').textContent = data.hero.name || 'Steven';
+                    document.getElementById('hero-name').textContent = data.hero.name || 'Dallah';
                     document.getElementById('hero-description').textContent = data.hero.description || 'A passionate web developer and graphic designer...';
                     if (data.hero.profileImage) {
                         document.getElementById('profile-image').src = API_BASE + data.hero.profileImage;
@@ -455,7 +455,7 @@
                 // Update contact info
                 if (data.contact) {
                     document.getElementById('contact-phone').textContent = data.contact.phone || '+1 (555) 123-4567';
-                    document.getElementById('contact-email').textContent = data.contact.email || 'steven@example.com';
+                    document.getElementById('contact-email').textContent = data.contact.email || 'Dallah@example.com';
                     document.getElementById('contact-location').textContent = data.contact.location || 'San Francisco, CA';
                     
                     if (data.contact.socialLinks) {
@@ -475,7 +475,7 @@
                 if (data.siteInfo) {
                     document.getElementById('logo').textContent = data.siteInfo.siteTitle || 'LOGO';
                     document.getElementById('footer-logo').textContent = data.siteInfo.siteTitle || 'LOGO';
-                    document.getElementById('footer-text').textContent = data.siteInfo.footerText || '&copy; 2024 Steven. All rights reserved. | Developed with passion.';
+                    document.getElementById('footer-text').textContent = data.siteInfo.footerText || '&copy; 2024 Dallah. All rights reserved. | Developed with passion.';
                     
                     if (data.siteInfo.logo) {
                         // If you have a logo image, you could update it here
