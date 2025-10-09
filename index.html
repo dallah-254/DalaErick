@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steven's Interactive Portfolio - Skeleton</title>
+    <title>Steven's Interactive Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         /* Custom scrollbar for aesthetics */
         body::-webkit-scrollbar { width: 8px; }
@@ -31,6 +32,21 @@
             padding-left: 1rem;
             padding-right: 1rem;
         }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #ffaa00;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
     <script>
         // Custom Tailwind Configuration for the Dark Theme
@@ -50,6 +66,9 @@
                 }
             }
         }
+        
+        // API Base URL
+        const API_BASE = 'http://localhost:5000/api';
     </script>
 </head>
 
@@ -58,7 +77,7 @@
     <!-- Navbar -->
     <header class="sticky top-0 z-50 bg-primary-dark/95 backdrop-blur-sm border-b border-secondary-dark/50 shadow-lg">
         <nav class="main-content mx-auto flex justify-between items-center py-4">
-            <div class="text-2xl font-black text-text-light">LOGO</div>
+            <div id="logo" class="text-2xl font-black text-text-light">LOGO</div>
             <div class="hidden md:flex space-x-8 text-sm font-medium text-text-muted">
                 <a href="#home" class="hover:text-accent transition duration-200">Home</a>
                 <a href="#about" class="hover:text-accent transition duration-200">About Me</a>
@@ -82,13 +101,13 @@
                 <!-- Left Content -->
                 <div class="md:col-span-2 space-y-6">
                     <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
-                        Hi, I'm <span class="text-accent">Steven</span> <span class="text-4xl">😊</span>
+                        Hi, I'm <span id="hero-name" class="text-accent">Steven</span> <span class="text-4xl">😊</span>
                     </h1>
-                    <p class="text-lg text-text-muted max-w-2xl">
+                    <p id="hero-description" class="text-lg text-text-muted max-w-2xl">
                         A passionate web developer and graphic designer creating modern, interactive, and beautiful digital experiences. Let's build something amazing together!
                     </p>
                     <div class="flex space-x-4 items-center pt-2">
-                        <button class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-accent-glow">
+                        <button id="download-resume" class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-accent-glow">
                             Download Resume
                         </button>
                         <a href="#contact" class="text-text-light hover:text-accent transition duration-300 font-medium">
@@ -100,8 +119,9 @@
                 <!-- Right Image -->
                 <div class="md:col-span-1 flex justify-center md:justify-end">
                     <div class="w-56 h-56 rounded-full overflow-hidden border-4 border-accent/50 p-1 bg-secondary-dark shadow-2xl">
-                        <img src="https://placehold.co/224x224/1e1e32/ffaa00?text=Profile+Pic" 
-                             alt="Steven's Profile Picture" 
+                        <img id="profile-image" 
+                             src="https://placehold.co/224x224/1e1e32/ffaa00?text=Profile+Pic" 
+                             alt="Profile Picture" 
                              class="w-full h-full object-cover rounded-full transition duration-500 hover:scale-[1.03]"
                              onerror="this.onerror=null; this.src='https://placehold.co/224x224/1e1e32/ffaa00?text=Avatar';" />
                     </div>
@@ -112,27 +132,11 @@
         <!-- Services Section -->
         <section id="services" class="mb-16">
             <h2 class="text-3xl font-bold mb-8">My Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Service Card 1 -->
-                <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group">
-                    <i class="fas fa-desktop text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
-                    <h3 class="text-xl font-bold mb-2">Web Development</h3>
-                    <p class="text-text-muted text-sm">Crafting fast, responsive, and robust websites and applications from scratch.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-4 block">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
-                </div>
-                <!-- Service Card 2 -->
-                <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group">
-                    <i class="fas fa-pencil-ruler text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
-                    <h3 class="text-xl font-bold mb-2">Graphic Design</h3>
-                    <p class="text-text-muted text-sm">Creating stunning visual identities, branding, and marketing materials that capture attention.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-4 block">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
-                </div>
-                <!-- Service Card 3 -->
-                <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group">
-                    <i class="fas fa-file-code text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
-                    <h3 class="text-xl font-bold mb-2">Web Design</h3>
-                    <p class="text-text-muted text-sm">Focusing on user experience (UX) and modern, intuitive interfaces (UI) for digital products.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-4 block">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
+            <div id="services-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Services will be loaded dynamically -->
+                <div class="text-center py-8">
+                    <div class="loading mx-auto"></div>
+                    <p class="mt-2 text-text-muted">Loading services...</p>
                 </div>
             </div>
         </section>
@@ -142,18 +146,11 @@
             <!-- Left Column: Education -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">My Education</h2>
-                <div class="space-y-6">
-                    <!-- Education Item 1 -->
-                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent shadow-md">
-                        <p class="text-xs text-text-muted mb-1">2018 - 2022</p>
-                        <h4 class="text-lg font-semibold">Master of Science in Computer Science</h4>
-                        <p class="text-sm text-text-muted">Massachusetts Institute of Technology (MIT)</p>
-                    </div>
-                    <!-- Education Item 2 -->
-                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent shadow-md">
-                        <p class="text-xs text-text-muted mb-1">2014 - 2018</p>
-                        <h4 class="text-lg font-semibold">Bachelor of Arts in Design</h4>
-                        <p class="text-sm text-text-muted">Rhode Island School of Design (RISD)</p>
+                <div id="education-container" class="space-y-6">
+                    <!-- Education will be loaded dynamically -->
+                    <div class="text-center py-4">
+                        <div class="loading mx-auto"></div>
+                        <p class="mt-2 text-text-muted">Loading education...</p>
                     </div>
                 </div>
             </div>
@@ -161,7 +158,7 @@
             <!-- Right Column: More About Me (Stats) -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">More About Me</h2>
-                <p class="text-text-muted mb-6 text-sm">
+                <p id="about-description" class="text-text-muted mb-6 text-sm">
                     Leveraging a strong foundation in both technical development and artistic design to create holistic digital solutions. My approach blends functionality with aesthetics.
                 </p>
                 <div class="grid grid-cols-3 gap-4 text-center">
@@ -186,46 +183,11 @@
             <!-- Left Column: Skills -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">My Skills</h2>
-                <div class="space-y-4">
-                    <!-- Skill Item -->
-                    <div class="skill-item">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm">Web Development</span>
-                            <span class="text-sm font-semibold">95%</span>
-                        </div>
-                        <div class="w-full bg-secondary-dark rounded-full h-2.5">
-                            <div class="bg-accent h-2.5 rounded-full" style="width: 95%"></div>
-                        </div>
-                    </div>
-                    <!-- Skill Item -->
-                    <div class="skill-item">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm">Graphic Design</span>
-                            <span class="text-sm font-semibold">88%</span>
-                        </div>
-                        <div class="w-full bg-secondary-dark rounded-full h-2.5">
-                            <div class="bg-accent h-2.5 rounded-full" style="width: 88%"></div>
-                        </div>
-                    </div>
-                    <!-- Skill Item -->
-                    <div class="skill-item">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm">UI/UX Design</span>
-                            <span class="text-sm font-semibold">91%</span>
-                        </div>
-                        <div class="w-full bg-secondary-dark rounded-full h-2.5">
-                            <div class="bg-accent h-2.5 rounded-full" style="width: 91%"></div>
-                        </div>
-                    </div>
-                    <!-- Skill Item -->
-                    <div class="skill-item">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm">Team Leadership</span>
-                            <span class="text-sm font-semibold">85%</span>
-                        </div>
-                        <div class="w-full bg-secondary-dark rounded-full h-2.5">
-                            <div class="bg-accent h-2.5 rounded-full" style="width: 85%"></div>
-                        </div>
+                <div id="skills-container" class="space-y-4">
+                    <!-- Skills will be loaded dynamically -->
+                    <div class="text-center py-4">
+                        <div class="loading mx-auto"></div>
+                        <p class="mt-2 text-text-muted">Loading skills...</p>
                     </div>
                 </div>
             </div>
@@ -233,24 +195,11 @@
             <!-- Right Column: Experience -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">My Experience</h2>
-                <div class="space-y-6">
-                    <!-- Experience Item 1 -->
-                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md">
-                        <p class="text-xs text-accent mb-1">2023 - Present</p>
-                        <h4 class="text-lg font-semibold">SENIOR WEB DEVELOPER</h4>
-                        <p class="text-sm text-text-muted">Tech Innovators Inc. - Remote</p>
-                    </div>
-                    <!-- Experience Item 2 -->
-                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md">
-                        <p class="text-xs text-accent mb-1">2020 - 2023</p>
-                        <h4 class="text-lg font-semibold">CREATIVE LEAD & DESIGNER</h4>
-                        <p class="text-sm text-text-muted">Digital Agency X - New York, NY</p>
-                    </div>
-                    <!-- Experience Item 3 -->
-                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md">
-                        <p class="text-xs text-accent mb-1">2018 - 2020</p>
-                        <h4 class="text-lg font-semibold">JUNIOR FRONT-END DEV</h4>
-                        <p class="text-sm text-text-muted">Startup Delta - Boston, MA</p>
+                <div id="experience-container" class="space-y-6">
+                    <!-- Experience will be loaded dynamically -->
+                    <div class="text-center py-4">
+                        <div class="loading mx-auto"></div>
+                        <p class="mt-2 text-text-muted">Loading experience...</p>
                     </div>
                 </div>
             </div>
@@ -259,42 +208,11 @@
         <!-- Latest Projects Section -->
         <section id="projects" class="mb-16">
             <h2 class="text-3xl font-bold mb-8">My Latest Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Project Card 1 -->
-                <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
-                    <img src="https://placehold.co/600x400/1e1e32/fff?text=Project+1+Screenshot" 
-                         alt="Project 1 Screenshot" 
-                         class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />
-                    <h3 class="text-xl font-bold mb-1">Interactive Fintech App</h3>
-                    <p class="text-text-muted text-sm">A modern finance tracking application built with React and Node.js.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
-                </div>
-                <!-- Project Card 2 -->
-                <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
-                    <img src="https://placehold.co/600x400/1e1e32/fff?text=Project+2+Screenshot" 
-                         alt="Project 2 Screenshot" 
-                         class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />
-                    <h3 class="text-xl font-bold mb-1">E-commerce Platform Redesign</h3>
-                    <p class="text-text-muted text-sm">Complete UX/UI redesign for a high-traffic online store.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
-                </div>
-                <!-- Project Card 3 (Placeholder for Grid 2/Row 1) -->
-                <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
-                    <img src="https://placehold.co/600x400/1e1e32/fff?text=Project+3+Screenshot" 
-                         alt="Project 3 Screenshot" 
-                         class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />
-                    <h3 class="text-xl font-bold mb-1">Data Visualization Dashboard</h3>
-                    <p class="text-text-muted text-sm">Interactive dashboard using D3.js to display complex metrics.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
-                </div>
-                <!-- Project Card 4 (Placeholder for Grid 2/Row 2) -->
-                <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
-                    <img src="https://placehold.co/600x400/1e1e32/fff?text=Project+4+Screenshot" 
-                         alt="Project 4 Screenshot" 
-                         class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />
-                    <h3 class="text-xl font-bold mb-1">Mobile Game Concept Art</h3>
-                    <p class="text-text-muted text-sm">Illustrative concept art and asset design for a mobile puzzle game.</p>
-                    <a href="#" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Projects will be loaded dynamically -->
+                <div class="text-center py-8">
+                    <div class="loading mx-auto"></div>
+                    <p class="mt-2 text-text-muted">Loading projects...</p>
                 </div>
             </div>
         </section>
@@ -302,39 +220,11 @@
         <!-- Testimonials Section -->
         <section id="testimonials" class="mb-16">
             <h2 class="text-3xl font-bold mb-8">Testimonials</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Testimonial Card 1 -->
-                <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <img src="https://placehold.co/50x50/333/fff?text=C1" alt="Client 1" class="rounded-full mr-3">
-                        <div>
-                            <p class="font-semibold">Jane Doe</p>
-                            <p class="text-xs text-text-muted">CEO, Alpha Corp</p>
-                        </div>
-                    </div>
-                    <p class="text-sm italic text-text-muted">"Steven delivered a complex project ahead of schedule. The quality and attention to detail were exceptional!"</p>
-                </div>
-                <!-- Testimonial Card 2 -->
-                <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <img src="https://placehold.co/50x50/333/fff?text=C2" alt="Client 2" class="rounded-full mr-3">
-                        <div>
-                            <p class="font-semibold">Mark Smith</p>
-                            <p class="text-xs text-text-muted">Founder, Beta Solutions</p>
-                        </div>
-                    </div>
-                    <p class="text-sm italic text-text-muted">"His design skills transformed our brand image. Highly collaborative and highly recommended."</p>
-                </div>
-                <!-- Testimonial Card 3 -->
-                <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <img src="https://placehold.co/50x50/333/fff?text=C3" alt="Client 3" class="rounded-full mr-3">
-                        <div>
-                            <p class="font-semibold">Lisa Wong</p>
-                            <p class="text-xs text-text-muted">Lead PM, Gamma Tech</p>
-                        </div>
-                    </div>
-                    <p class="text-sm italic text-text-muted">"Responsive, professional, and excellent communicator. A pleasure to work with on any project."</p>
+            <div id="testimonials-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonials will be loaded dynamically -->
+                <div class="text-center py-8">
+                    <div class="loading mx-auto"></div>
+                    <p class="mt-2 text-text-muted">Loading testimonials...</p>
                 </div>
             </div>
         </section>
@@ -356,7 +246,7 @@
                         <i class="fas fa-phone-alt text-accent text-2xl mt-1 mr-4"></i>
                         <div>
                             <p class="text-sm text-text-muted">Call Me:</p>
-                            <p class="font-medium text-text-light">+1 (555) 123-4567</p>
+                            <p id="contact-phone" class="font-medium text-text-light">+1 (555) 123-4567</p>
                         </div>
                     </div>
                     
@@ -365,7 +255,7 @@
                         <i class="fas fa-envelope text-accent text-2xl mt-1 mr-4"></i>
                         <div>
                             <p class="text-sm text-text-muted">Email:</p>
-                            <p class="font-medium text-text-light">steven@example.com</p>
+                            <p id="contact-email" class="font-medium text-text-light">steven@example.com</p>
                         </div>
                     </div>
                     
@@ -374,20 +264,20 @@
                         <i class="fas fa-map-marker-alt text-accent text-2xl mt-1 mr-4"></i>
                         <div>
                             <p class="text-sm text-text-muted">Location:</p>
-                            <p class="font-medium text-text-light">San Francisco, CA</p>
+                            <p id="contact-location" class="font-medium text-text-light">San Francisco, CA</p>
                         </div>
                     </div>
                     
                     <div class="flex space-x-4 pt-4">
-                        <a href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-github"></i></a>
-                        <a href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-twitter"></i></a>
+                        <a id="linkedin-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-linkedin"></i></a>
+                        <a id="github-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-github"></i></a>
+                        <a id="twitter-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
 
                 <!-- Contact Form (Right Column) -->
                 <div class="lg:col-span-2">
-                    <form class="space-y-4">
+                    <form class="space-y-4" id="contact-form">
                         <div class="grid sm:grid-cols-2 gap-4">
                             <input type="text" placeholder="Name" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required>
                             <input type="email" placeholder="Email" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required>
@@ -407,8 +297,8 @@
     <!-- Footer -->
     <footer class="bg-primary-dark border-t border-secondary-dark/50 py-8">
         <div class="main-content mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-            <div class="text-3xl font-black text-text-light mb-4 md:mb-0">LOGO</div>
-            <p class="text-sm text-text-muted">
+            <div id="footer-logo" class="text-3xl font-black text-text-light mb-4 md:mb-0">LOGO</div>
+            <p id="footer-text" class="text-sm text-text-muted">
                 &copy; 2024 Steven. All rights reserved. | Developed with passion.
             </p>
             <a href="#home" class="text-accent text-lg hover:opacity-80 transition duration-200 mt-4 md:mt-0">
@@ -417,5 +307,210 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        // Load portfolio data from backend
+        async function loadPortfolioData() {
+            try {
+                const response = await fetch(`${API_BASE}/portfolio`);
+                const data = await response.json();
+                
+                // Update hero section
+                if (data.hero) {
+                    document.getElementById('hero-name').textContent = data.hero.name || 'Steven';
+                    document.getElementById('hero-description').textContent = data.hero.description || 'A passionate web developer and graphic designer...';
+                    if (data.hero.profileImage) {
+                        document.getElementById('profile-image').src = API_BASE + data.hero.profileImage;
+                    }
+                    if (data.hero.resume) {
+                        document.getElementById('download-resume').addEventListener('click', () => {
+                            window.open(API_BASE + data.hero.resume, '_blank');
+                        });
+                    }
+                }
+                
+                // Update services
+                if (data.services && data.services.length > 0) {
+                    const servicesContainer = document.getElementById('services-container');
+                    servicesContainer.innerHTML = data.services.map(service => `
+                        <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group">
+                            <i class="${service.icon || 'fas fa-desktop'} text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
+                            <h3 class="text-xl font-bold mb-2">${service.title}</h3>
+                            <p class="text-text-muted text-sm">${service.description}</p>
+                            <a href="#" class="text-accent text-sm font-semibold mt-4 block">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update education
+                if (data.education && data.education.length > 0) {
+                    const educationContainer = document.getElementById('education-container');
+                    educationContainer.innerHTML = data.education.map(edu => `
+                        <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent shadow-md">
+                            <p class="text-xs text-text-muted mb-1">${edu.period}</p>
+                            <h4 class="text-lg font-semibold">${edu.degree}</h4>
+                            <p class="text-sm text-text-muted">${edu.institution}</p>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update skills
+                if (data.skills && data.skills.length > 0) {
+                    const skillsContainer = document.getElementById('skills-container');
+                    skillsContainer.innerHTML = data.skills.map(skill => `
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">${skill.name}</span>
+                                <span class="text-sm font-semibold">${skill.percentage}%</span>
+                            </div>
+                            <div class="w-full bg-secondary-dark rounded-full h-2.5">
+                                <div class="bg-accent h-2.5 rounded-full" style="width: ${skill.percentage}%"></div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update experience
+                if (data.experience && data.experience.length > 0) {
+                    const experienceContainer = document.getElementById('experience-container');
+                    experienceContainer.innerHTML = data.experience.map(exp => `
+                        <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md">
+                            <p class="text-xs text-accent mb-1">${exp.period}</p>
+                            <h4 class="text-lg font-semibold">${exp.position}</h4>
+                            <p class="text-sm text-text-muted">${exp.company} - ${exp.location}</p>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update projects
+                if (data.projects && data.projects.length > 0) {
+                    const projectsContainer = document.getElementById('projects-container');
+                    projectsContainer.innerHTML = data.projects.map(project => `
+                        <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
+                            ${project.images && project.images.length > 0 ? 
+                                `<div class="swiper project-swiper-${project._id} rounded-lg mb-4 w-full aspect-video">
+                                    <div class="swiper-wrapper">
+                                        ${project.images.map(img => `
+                                            <div class="swiper-slide">
+                                                <img src="${API_BASE}${img}" 
+                                                     alt="${project.title}" 
+                                                     class="w-full h-full object-cover" />
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    ${project.images.length > 1 ? `
+                                        <div class="swiper-pagination"></div>
+                                        <div class="swiper-button-next"></div>
+                                        <div class="swiper-button-prev"></div>
+                                    ` : ''}
+                                </div>` : 
+                                `<img src="https://placehold.co/600x400/1e1e32/fff?text=Project+Image" 
+                                     alt="${project.title}" 
+                                     class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />`
+                            }
+                            <h3 class="text-xl font-bold mb-1">${project.title}</h3>
+                            <p class="text-text-muted text-sm">${project.description}</p>
+                            <a href="${project.link || '#'}" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                    `).join('');
+                    
+                    // Initialize Swiper for projects with multiple images
+                    data.projects.forEach(project => {
+                        if (project.images && project.images.length > 1) {
+                            new Swiper(`.project-swiper-${project._id}`, {
+                                loop: true,
+                                pagination: {
+                                    el: `.project-swiper-${project._id} .swiper-pagination`,
+                                    clickable: true,
+                                },
+                                navigation: {
+                                    nextEl: `.project-swiper-${project._id} .swiper-button-next`,
+                                    prevEl: `.project-swiper-${project._id} .swiper-button-prev`,
+                                },
+                            });
+                        }
+                    });
+                }
+                
+                // Update testimonials
+                if (data.testimonials && data.testimonials.length > 0) {
+                    const testimonialsContainer = document.getElementById('testimonials-container');
+                    testimonialsContainer.innerHTML = data.testimonials.map(testimonial => `
+                        <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <img src="${testimonial.avatar ? API_BASE + testimonial.avatar : 'https://placehold.co/50x50/333/fff?text=C'}" 
+                                     alt="${testimonial.name}" 
+                                     class="rounded-full mr-3 w-12 h-12 object-cover">
+                                <div>
+                                    <p class="font-semibold">${testimonial.name}</p>
+                                    <p class="text-xs text-text-muted">${testimonial.position}, ${testimonial.company}</p>
+                                </div>
+                            </div>
+                            <p class="text-sm italic text-text-muted">"${testimonial.content}"</p>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update contact info
+                if (data.contact) {
+                    document.getElementById('contact-phone').textContent = data.contact.phone || '+1 (555) 123-4567';
+                    document.getElementById('contact-email').textContent = data.contact.email || 'steven@example.com';
+                    document.getElementById('contact-location').textContent = data.contact.location || 'San Francisco, CA';
+                    
+                    if (data.contact.socialLinks) {
+                        if (data.contact.socialLinks.linkedin) {
+                            document.getElementById('linkedin-link').href = data.contact.socialLinks.linkedin;
+                        }
+                        if (data.contact.socialLinks.github) {
+                            document.getElementById('github-link').href = data.contact.socialLinks.github;
+                        }
+                        if (data.contact.socialLinks.twitter) {
+                            document.getElementById('twitter-link').href = data.contact.socialLinks.twitter;
+                        }
+                    }
+                }
+                
+                // Update site info
+                if (data.siteInfo) {
+                    document.getElementById('logo').textContent = data.siteInfo.siteTitle || 'LOGO';
+                    document.getElementById('footer-logo').textContent = data.siteInfo.siteTitle || 'LOGO';
+                    document.getElementById('footer-text').textContent = data.siteInfo.footerText || '&copy; 2024 Steven. All rights reserved. | Developed with passion.';
+                    
+                    if (data.siteInfo.logo) {
+                        // If you have a logo image, you could update it here
+                        // document.getElementById('logo').innerHTML = `<img src="${API_BASE}${data.siteInfo.logo}" alt="Logo" class="h-8">`;
+                    }
+                }
+                
+                // Update theme
+                if (data.theme) {
+                    document.documentElement.style.setProperty('--primary-dark', data.theme.primaryColor || '#121223');
+                    document.documentElement.style.setProperty('--secondary-dark', data.theme.secondaryColor || '#1e1e32');
+                    document.documentElement.style.setProperty('--accent', data.theme.accentColor || '#ffaa00');
+                    
+                    if (data.theme.fontFamily) {
+                        document.body.style.fontFamily = data.theme.fontFamily;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error loading portfolio data:', error);
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPortfolioData();
+            
+            // Contact form submission
+            document.getElementById('contact-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                // In a real implementation, you would send this to your backend
+                alert('Message sent! (This is a demo - in a real site, this would send an email)');
+                e.target.reset();
+            });
+        });
+    </script>
 </body>
 </html>
