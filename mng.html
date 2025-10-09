@@ -611,7 +611,7 @@
     </div>
 
     <script>
-        const API_BASE = 'https://portfolio-backend-8xqk.onrender.com';
+        const API_BASE = 'https://portfolio-backend-8xqk.onrender.com/api';
         
         // Utility Functions
         function showToast(message, type = 'success') {
@@ -745,7 +745,7 @@
                         // Show profile image preview if exists
                         if (hero.profileImage) {
                             document.getElementById('profile-image-preview').innerHTML = `
-                                <img src="${API_BASE}${hero.profileImage}" class="image-preview border rounded">
+                                <img src="https://portfolio-backend-8xqk.onrender.com${hero.profileImage}" class="image-preview border rounded">
                                 <p class="text-sm text-gray-500 mt-1">Current profile image</p>
                             `;
                         }
@@ -754,7 +754,7 @@
                         if (hero.resume) {
                             const fileName = hero.resume.split('/').pop();
                             document.getElementById('resume-preview').innerHTML = `
-                                <a href="${API_BASE}${hero.resume}" target="_blank" class="text-blue-600 hover:underline">${fileName}</a>
+                                <a href="https://portfolio-backend-8xqk.onrender.com${hero.resume}" target="_blank" class="text-blue-600 hover:underline">${fileName}</a>
                                 <p class="text-sm text-gray-500 mt-1">Current resume</p>
                             `;
                         }
@@ -998,7 +998,7 @@
                                 ${project.images && project.images.length > 0 ? `
                                     <div class="grid grid-cols-3 gap-2 mb-4">
                                         ${project.images.slice(0, 3).map(img => `
-                                            <img src="${API_BASE}${img}" class="w-full h-20 object-cover rounded border">
+                                            <img src="https://portfolio-backend-8xqk.onrender.com${img}" class="w-full h-20 object-cover rounded border">
                                         `).join('')}
                                         ${project.images.length > 3 ? `<div class="text-center text-gray-500">+${project.images.length - 3} more</div>` : ''}
                                     </div>
@@ -1651,7 +1651,7 @@
                                 <div class="flex justify-between items-start mb-4">
                                     <div class="flex items-center">
                                         ${testimonial.avatar ? `
-                                            <img src="${API_BASE}${testimonial.avatar}" class="w-12 h-12 rounded-full mr-3 object-cover">
+                                            <img src="https://portfolio-backend-8xqk.onrender.com${testimonial.avatar}" class="w-12 h-12 rounded-full mr-3 object-cover">
                                         ` : `
                                             <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-3">
                                                 <i class="fas fa-user text-gray-600"></i>
@@ -1795,7 +1795,7 @@
                         // Show current avatar if exists
                         if (testimonial.avatar) {
                             document.getElementById('testimonial-avatar-preview').innerHTML = `
-                                <img src="${API_BASE}${testimonial.avatar}" class="image-preview border rounded">
+                                <img src="https://portfolio-backend-8xqk.onrender.com${testimonial.avatar}" class="image-preview border rounded">
                                 <p class="text-sm text-gray-500 mt-1">Current avatar</p>
                             `;
                         }
@@ -1969,7 +1969,7 @@
                         
                         if (siteInfo.logo) {
                             document.getElementById('logo-preview').innerHTML = `
-                                <img src="${API_BASE}${siteInfo.logo}" class="image-preview border rounded">
+                                <img src="https://portfolio-backend-8xqk.onrender.com${siteInfo.logo}" class="image-preview border rounded">
                                 <p class="text-sm text-gray-500 mt-1">Current logo</p>
                             `;
                         }
