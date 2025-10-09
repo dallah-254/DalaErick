@@ -640,14 +640,14 @@
         
         function setLoading(button, isLoading) {
             const loadingEl = button.querySelector('.loading');
-            const textEl = button.querySelector('span');
-            
-            if (isLoading) {
-                loadingEl.classList.remove('hidden');
-                button.disabled = true;
-            } else {
-                loadingEl.classList.add('hidden');
-                button.disabled = false;
+            if (loadingEl) {
+                if (isLoading) {
+                    loadingEl.classList.remove('hidden');
+                    button.disabled = true;
+                } else {
+                    loadingEl.classList.add('hidden');
+                    button.disabled = false;
+                }
             }
         }
         
@@ -817,12 +817,12 @@
                     const result = await response.json();
                     const container = document.getElementById('services-list');
                     
-                    if (result.success && result.data.length === 0) {
-                        container.innerHTML = '<p class="text-gray-500 text-center py-8">No services added yet. Click "Add New Service" to get started.</p>';
-                        return;
-                    }
-                    
                     if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No services added yet. Click "Add New Service" to get started.</p>';
+                            return;
+                        }
+                        
                         container.innerHTML = result.data.map(service => `
                             <div class="border rounded-lg p-4 flex justify-between items-center">
                                 <div class="flex items-center">
@@ -875,6 +875,7 @@
             
             loadingEl.classList.remove('hidden');
             submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
             
             const serviceData = {
                 title: document.getElementById('service-title').value,
@@ -913,6 +914,7 @@
             } finally {
                 loadingEl.classList.add('hidden');
                 submitText.textContent = 'Save';
+                submitButton.disabled = false;
             }
         });
         
@@ -962,9 +964,6 @@
             }
         }
         
-        // Similar implementations for other sections (Projects, Education, Experience, Skills, Testimonials)
-        // Due to length constraints, I'll show the pattern for one more section
-        
         // Projects Management
         async function loadProjects() {
             try {
@@ -973,12 +972,12 @@
                     const result = await response.json();
                     const container = document.getElementById('projects-list');
                     
-                    if (result.success && result.data.length === 0) {
-                        container.innerHTML = '<p class="text-gray-500 text-center py-8">No projects added yet. Click "Add New Project" to get started.</p>';
-                        return;
-                    }
-                    
                     if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No projects added yet. Click "Add New Project" to get started.</p>';
+                            return;
+                        }
+                        
                         container.innerHTML = result.data.map(project => `
                             <div class="border rounded-lg p-6">
                                 <div class="flex justify-between items-start mb-4">
@@ -1050,6 +1049,975 @@
             });
         });
         
+        document.getElementById('project-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const loadingEl = document.getElementById('project-modal-loading');
+            const submitText = document.getElementById('project-submit-text');
+            
+            loadingEl.classList.remove('hidden');
+            submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
+            
+            const projectData = {
+                title: document.getElementById('project-title').value,
+                description: document.getElementById('project-description').value,
+                category: document.getElementById('project-category').value,
+                link: document.getElementById('project-link').value
+            };
+            
+            const projectId = document.getElementById('project-id').value;
+            const url = projectId ? 
+                `${API_BASE}/projects/${projectId}` : 
+                `${API_BASE}/projects`;
+                
+            const method = projectId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(projectData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Handle image uploads if any
+                    const imageFiles = document.getElementById('project-images').files;
+                    if (imageFiles.length > 0) {
+                        const formData = new FormData();
+                        Array.from(imageFiles).forEach(file => {
+                            formData.append('images', file);
+                        });
+                        
+                        const imageResponse = await fetch(`${API_BASE}/projects/${result.data._id}/images`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (!imageResponse.ok) {
+                            throw new Error('Failed to upload images');
+                        }
+                    }
+                    
+                    closeModal('project-modal');
+                    loadProjects();
+                    showToast(result.message || 'Project saved successfully!');
+                } else {
+                    showToast(result.message || 'Error saving project', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving project:', error);
+                showToast('Error saving project', 'error');
+            } finally {
+                loadingEl.classList.add('hidden');
+                submitText.textContent = 'Save';
+                submitButton.disabled = false;
+            }
+        });
+        
+        async function editProject(id) {
+            try {
+                const response = await fetch(`${API_BASE}/projects/${id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const project = result.data;
+                        
+                        document.getElementById('project-modal-title').textContent = 'Edit Project';
+                        document.getElementById('project-id').value = project._id;
+                        document.getElementById('project-title').value = project.title;
+                        document.getElementById('project-description').value = project.description;
+                        document.getElementById('project-category').value = project.category || '';
+                        document.getElementById('project-link').value = project.link || '';
+                        document.getElementById('project-submit-text').textContent = 'Update';
+                        
+                        // Clear image preview and don't show existing images in file input
+                        document.getElementById('project-images-preview').innerHTML = '';
+                        
+                        openModal('project-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading project for edit:', error);
+                showToast('Error loading project', 'error');
+            }
+        }
+        
+        async function deleteProject(id) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/projects/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        loadProjects();
+                        showToast(result.message || 'Project deleted successfully!');
+                    } else {
+                        showToast(result.message || 'Error deleting project', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    showToast('Error deleting project', 'error');
+                }
+            }
+        }
+        
+        // Education Management
+        async function loadEducation() {
+            try {
+                const response = await fetch(`${API_BASE}/education`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const container = document.getElementById('education-list');
+                    
+                    if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No education entries added yet. Click "Add Education" to get started.</p>';
+                            return;
+                        }
+                        
+                        container.innerHTML = result.data.map(edu => `
+                            <div class="border rounded-lg p-4 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-medium">${edu.degree}</h3>
+                                    <p class="text-sm text-gray-600">${edu.institution}</p>
+                                    <p class="text-xs text-gray-500">${edu.period}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="edit-education text-blue-600 hover:text-blue-800 p-2" data-id="${edu._id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-education text-red-600 hover:text-red-800 p-2" data-id="${edu._id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        // Add event listeners
+                        document.querySelectorAll('.edit-education').forEach(button => {
+                            button.addEventListener('click', () => editEducation(button.getAttribute('data-id')));
+                        });
+                        
+                        document.querySelectorAll('.delete-education').forEach(button => {
+                            button.addEventListener('click', () => deleteEducation(button.getAttribute('data-id')));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading education:', error);
+                showToast('Error loading education', 'error');
+            }
+        }
+        
+        document.getElementById('add-education').addEventListener('click', () => {
+            document.getElementById('education-modal-title').textContent = 'Add Education';
+            document.getElementById('education-form').reset();
+            document.getElementById('education-id').value = '';
+            document.getElementById('education-submit-text').textContent = 'Save';
+            openModal('education-modal');
+        });
+        
+        document.getElementById('education-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const loadingEl = document.getElementById('education-modal-loading');
+            const submitText = document.getElementById('education-submit-text');
+            
+            loadingEl.classList.remove('hidden');
+            submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
+            
+            const educationData = {
+                period: document.getElementById('education-period').value,
+                degree: document.getElementById('education-degree').value,
+                institution: document.getElementById('education-institution').value
+            };
+            
+            const educationId = document.getElementById('education-id').value;
+            const url = educationId ? 
+                `${API_BASE}/education/${educationId}` : 
+                `${API_BASE}/education`;
+                
+            const method = educationId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(educationData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('education-modal');
+                    loadEducation();
+                    showToast(result.message || 'Education saved successfully!');
+                } else {
+                    showToast(result.message || 'Error saving education', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving education:', error);
+                showToast('Error saving education', 'error');
+            } finally {
+                loadingEl.classList.add('hidden');
+                submitText.textContent = 'Save';
+                submitButton.disabled = false;
+            }
+        });
+        
+        async function editEducation(id) {
+            try {
+                const response = await fetch(`${API_BASE}/education/${id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const edu = result.data;
+                        
+                        document.getElementById('education-modal-title').textContent = 'Edit Education';
+                        document.getElementById('education-id').value = edu._id;
+                        document.getElementById('education-period').value = edu.period;
+                        document.getElementById('education-degree').value = edu.degree;
+                        document.getElementById('education-institution').value = edu.institution;
+                        document.getElementById('education-submit-text').textContent = 'Update';
+                        
+                        openModal('education-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading education for edit:', error);
+                showToast('Error loading education', 'error');
+            }
+        }
+        
+        async function deleteEducation(id) {
+            if (confirm('Are you sure you want to delete this education entry?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/education/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        loadEducation();
+                        showToast(result.message || 'Education deleted successfully!');
+                    } else {
+                        showToast(result.message || 'Error deleting education', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting education:', error);
+                    showToast('Error deleting education', 'error');
+                }
+            }
+        }
+        
+        // Experience Management
+        async function loadExperience() {
+            try {
+                const response = await fetch(`${API_BASE}/experience`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const container = document.getElementById('experience-list');
+                    
+                    if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No experience entries added yet. Click "Add Experience" to get started.</p>';
+                            return;
+                        }
+                        
+                        container.innerHTML = result.data.map(exp => `
+                            <div class="border rounded-lg p-4 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-medium">${exp.position}</h3>
+                                    <p class="text-sm text-gray-600">${exp.company} - ${exp.location}</p>
+                                    <p class="text-xs text-gray-500">${exp.period}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="edit-experience text-blue-600 hover:text-blue-800 p-2" data-id="${exp._id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-experience text-red-600 hover:text-red-800 p-2" data-id="${exp._id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        // Add event listeners
+                        document.querySelectorAll('.edit-experience').forEach(button => {
+                            button.addEventListener('click', () => editExperience(button.getAttribute('data-id')));
+                        });
+                        
+                        document.querySelectorAll('.delete-experience').forEach(button => {
+                            button.addEventListener('click', () => deleteExperience(button.getAttribute('data-id')));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading experience:', error);
+                showToast('Error loading experience', 'error');
+            }
+        }
+        
+        document.getElementById('add-experience').addEventListener('click', () => {
+            document.getElementById('experience-modal-title').textContent = 'Add Experience';
+            document.getElementById('experience-form').reset();
+            document.getElementById('experience-id').value = '';
+            document.getElementById('experience-submit-text').textContent = 'Save';
+            openModal('experience-modal');
+        });
+        
+        document.getElementById('experience-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const loadingEl = document.getElementById('experience-modal-loading');
+            const submitText = document.getElementById('experience-submit-text');
+            
+            loadingEl.classList.remove('hidden');
+            submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
+            
+            const experienceData = {
+                period: document.getElementById('experience-period').value,
+                position: document.getElementById('experience-position').value,
+                company: document.getElementById('experience-company').value,
+                location: document.getElementById('experience-location').value
+            };
+            
+            const experienceId = document.getElementById('experience-id').value;
+            const url = experienceId ? 
+                `${API_BASE}/experience/${experienceId}` : 
+                `${API_BASE}/experience`;
+                
+            const method = experienceId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(experienceData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('experience-modal');
+                    loadExperience();
+                    showToast(result.message || 'Experience saved successfully!');
+                } else {
+                    showToast(result.message || 'Error saving experience', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving experience:', error);
+                showToast('Error saving experience', 'error');
+            } finally {
+                loadingEl.classList.add('hidden');
+                submitText.textContent = 'Save';
+                submitButton.disabled = false;
+            }
+        });
+        
+        async function editExperience(id) {
+            try {
+                const response = await fetch(`${API_BASE}/experience/${id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const exp = result.data;
+                        
+                        document.getElementById('experience-modal-title').textContent = 'Edit Experience';
+                        document.getElementById('experience-id').value = exp._id;
+                        document.getElementById('experience-period').value = exp.period;
+                        document.getElementById('experience-position').value = exp.position;
+                        document.getElementById('experience-company').value = exp.company;
+                        document.getElementById('experience-location').value = exp.location || '';
+                        document.getElementById('experience-submit-text').textContent = 'Update';
+                        
+                        openModal('experience-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading experience for edit:', error);
+                showToast('Error loading experience', 'error');
+            }
+        }
+        
+        async function deleteExperience(id) {
+            if (confirm('Are you sure you want to delete this experience entry?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/experience/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        loadExperience();
+                        showToast(result.message || 'Experience deleted successfully!');
+                    } else {
+                        showToast(result.message || 'Error deleting experience', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting experience:', error);
+                    showToast('Error deleting experience', 'error');
+                }
+            }
+        }
+        
+        // Skills Management
+        async function loadSkills() {
+            try {
+                const response = await fetch(`${API_BASE}/skills`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const container = document.getElementById('skills-list');
+                    
+                    if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No skills added yet. Click "Add Skill" to get started.</p>';
+                            return;
+                        }
+                        
+                        container.innerHTML = result.data.map(skill => `
+                            <div class="border rounded-lg p-4 flex justify-between items-center">
+                                <div class="flex-1">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="font-medium">${skill.name}</span>
+                                        <span class="text-sm font-semibold">${skill.percentage}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${skill.percentage}%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 ml-4">
+                                    <button class="edit-skill text-blue-600 hover:text-blue-800 p-2" data-id="${skill._id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-skill text-red-600 hover:text-red-800 p-2" data-id="${skill._id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        // Add event listeners
+                        document.querySelectorAll('.edit-skill').forEach(button => {
+                            button.addEventListener('click', () => editSkill(button.getAttribute('data-id')));
+                        });
+                        
+                        document.querySelectorAll('.delete-skill').forEach(button => {
+                            button.addEventListener('click', () => deleteSkill(button.getAttribute('data-id')));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                showToast('Error loading skills', 'error');
+            }
+        }
+        
+        document.getElementById('add-skill').addEventListener('click', () => {
+            document.getElementById('skill-modal-title').textContent = 'Add Skill';
+            document.getElementById('skill-form').reset();
+            document.getElementById('skill-id').value = '';
+            document.getElementById('skill-submit-text').textContent = 'Save';
+            openModal('skill-modal');
+        });
+        
+        document.getElementById('skill-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const loadingEl = document.getElementById('skill-modal-loading');
+            const submitText = document.getElementById('skill-submit-text');
+            
+            loadingEl.classList.remove('hidden');
+            submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
+            
+            const skillData = {
+                name: document.getElementById('skill-name').value,
+                percentage: parseInt(document.getElementById('skill-percentage').value)
+            };
+            
+            const skillId = document.getElementById('skill-id').value;
+            const url = skillId ? 
+                `${API_BASE}/skills/${skillId}` : 
+                `${API_BASE}/skills`;
+                
+            const method = skillId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(skillData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('skill-modal');
+                    loadSkills();
+                    showToast(result.message || 'Skill saved successfully!');
+                } else {
+                    showToast(result.message || 'Error saving skill', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving skill:', error);
+                showToast('Error saving skill', 'error');
+            } finally {
+                loadingEl.classList.add('hidden');
+                submitText.textContent = 'Save';
+                submitButton.disabled = false;
+            }
+        });
+        
+        async function editSkill(id) {
+            try {
+                const response = await fetch(`${API_BASE}/skills/${id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const skill = result.data;
+                        
+                        document.getElementById('skill-modal-title').textContent = 'Edit Skill';
+                        document.getElementById('skill-id').value = skill._id;
+                        document.getElementById('skill-name').value = skill.name;
+                        document.getElementById('skill-percentage').value = skill.percentage;
+                        document.getElementById('skill-submit-text').textContent = 'Update';
+                        
+                        openModal('skill-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading skill for edit:', error);
+                showToast('Error loading skill', 'error');
+            }
+        }
+        
+        async function deleteSkill(id) {
+            if (confirm('Are you sure you want to delete this skill?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/skills/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        loadSkills();
+                        showToast(result.message || 'Skill deleted successfully!');
+                    } else {
+                        showToast(result.message || 'Error deleting skill', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting skill:', error);
+                    showToast('Error deleting skill', 'error');
+                }
+            }
+        }
+        
+        // Testimonials Management
+        async function loadTestimonials() {
+            try {
+                const response = await fetch(`${API_BASE}/testimonials`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const container = document.getElementById('testimonials-list');
+                    
+                    if (result.success) {
+                        if (result.data.length === 0) {
+                            container.innerHTML = '<p class="text-gray-500 text-center py-8">No testimonials added yet. Click "Add Testimonial" to get started.</p>';
+                            return;
+                        }
+                        
+                        container.innerHTML = result.data.map(testimonial => `
+                            <div class="border rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex items-center">
+                                        ${testimonial.avatar ? `
+                                            <img src="${API_BASE}${testimonial.avatar}" class="w-12 h-12 rounded-full mr-3 object-cover">
+                                        ` : `
+                                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-gray-600"></i>
+                                            </div>
+                                        `}
+                                        <div>
+                                            <h3 class="font-medium">${testimonial.name}</h3>
+                                            <p class="text-sm text-gray-600">${testimonial.position}, ${testimonial.company}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="edit-testimonial text-blue-600 hover:text-blue-800 p-2" data-id="${testimonial._id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="delete-testimonial text-red-600 hover:text-red-800 p-2" data-id="${testimonial._id}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 italic">"${testimonial.content}"</p>
+                            </div>
+                        `).join('');
+                        
+                        // Add event listeners
+                        document.querySelectorAll('.edit-testimonial').forEach(button => {
+                            button.addEventListener('click', () => editTestimonial(button.getAttribute('data-id')));
+                        });
+                        
+                        document.querySelectorAll('.delete-testimonial').forEach(button => {
+                            button.addEventListener('click', () => deleteTestimonial(button.getAttribute('data-id')));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+                showToast('Error loading testimonials', 'error');
+            }
+        }
+        
+        document.getElementById('add-testimonial').addEventListener('click', () => {
+            document.getElementById('testimonial-modal-title').textContent = 'Add Testimonial';
+            document.getElementById('testimonial-form').reset();
+            document.getElementById('testimonial-id').value = '';
+            document.getElementById('testimonial-avatar-preview').innerHTML = '';
+            document.getElementById('testimonial-submit-text').textContent = 'Save';
+            openModal('testimonial-modal');
+        });
+        
+        document.getElementById('testimonial-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const loadingEl = document.getElementById('testimonial-modal-loading');
+            const submitText = document.getElementById('testimonial-submit-text');
+            
+            loadingEl.classList.remove('hidden');
+            submitText.textContent = 'Saving...';
+            submitButton.disabled = true;
+            
+            const testimonialData = {
+                name: document.getElementById('testimonial-name').value,
+                position: document.getElementById('testimonial-position').value,
+                company: document.getElementById('testimonial-company').value,
+                content: document.getElementById('testimonial-content').value
+            };
+            
+            const testimonialId = document.getElementById('testimonial-id').value;
+            const url = testimonialId ? 
+                `${API_BASE}/testimonials/${testimonialId}` : 
+                `${API_BASE}/testimonials`;
+                
+            const method = testimonialId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testimonialData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Handle avatar upload if any
+                    const avatarFile = document.getElementById('testimonial-avatar').files[0];
+                    if (avatarFile) {
+                        const formData = new FormData();
+                        formData.append('file', avatarFile);
+                        
+                        const avatarResponse = await fetch(`${API_BASE}/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (avatarResponse.ok) {
+                            const avatarResult = await avatarResponse.json();
+                            // Update testimonial with avatar
+                            await fetch(`${API_BASE}/testimonials/${result.data._id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ avatar: avatarResult.filePath })
+                            });
+                        }
+                    }
+                    
+                    closeModal('testimonial-modal');
+                    loadTestimonials();
+                    showToast(result.message || 'Testimonial saved successfully!');
+                } else {
+                    showToast(result.message || 'Error saving testimonial', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving testimonial:', error);
+                showToast('Error saving testimonial', 'error');
+            } finally {
+                loadingEl.classList.add('hidden');
+                submitText.textContent = 'Save';
+                submitButton.disabled = false;
+            }
+        });
+        
+        async function editTestimonial(id) {
+            try {
+                const response = await fetch(`${API_BASE}/testimonials/${id}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const testimonial = result.data;
+                        
+                        document.getElementById('testimonial-modal-title').textContent = 'Edit Testimonial';
+                        document.getElementById('testimonial-id').value = testimonial._id;
+                        document.getElementById('testimonial-name').value = testimonial.name;
+                        document.getElementById('testimonial-position').value = testimonial.position || '';
+                        document.getElementById('testimonial-company').value = testimonial.company || '';
+                        document.getElementById('testimonial-content').value = testimonial.content;
+                        document.getElementById('testimonial-submit-text').textContent = 'Update';
+                        
+                        // Show current avatar if exists
+                        if (testimonial.avatar) {
+                            document.getElementById('testimonial-avatar-preview').innerHTML = `
+                                <img src="${API_BASE}${testimonial.avatar}" class="image-preview border rounded">
+                                <p class="text-sm text-gray-500 mt-1">Current avatar</p>
+                            `;
+                        }
+                        
+                        openModal('testimonial-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading testimonial for edit:', error);
+                showToast('Error loading testimonial', 'error');
+            }
+        }
+        
+        async function deleteTestimonial(id) {
+            if (confirm('Are you sure you want to delete this testimonial?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/testimonials/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        loadTestimonials();
+                        showToast(result.message || 'Testimonial deleted successfully!');
+                    } else {
+                        showToast(result.message || 'Error deleting testimonial', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting testimonial:', error);
+                    showToast('Error deleting testimonial', 'error');
+                }
+            }
+        }
+        
+        // Contact Management
+        async function loadContact() {
+            try {
+                const response = await fetch(`${API_BASE}/contact`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const contact = result.data;
+                        document.getElementById('contact-phone').value = contact.phone || '';
+                        document.getElementById('contact-email').value = contact.email || '';
+                        document.getElementById('contact-location').value = contact.location || '';
+                        document.getElementById('contact-linkedin').value = contact.socialLinks?.linkedin || '';
+                        document.getElementById('contact-github').value = contact.socialLinks?.github || '';
+                        document.getElementById('contact-twitter').value = contact.socialLinks?.twitter || '';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading contact:', error);
+                showToast('Error loading contact information', 'error');
+            }
+        }
+        
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setLoading(submitButton, true);
+            
+            const contactData = {
+                phone: document.getElementById('contact-phone').value,
+                email: document.getElementById('contact-email').value,
+                location: document.getElementById('contact-location').value,
+                socialLinks: {
+                    linkedin: document.getElementById('contact-linkedin').value,
+                    github: document.getElementById('contact-github').value,
+                    twitter: document.getElementById('contact-twitter').value
+                }
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(contactData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Contact information updated successfully!');
+                } else {
+                    showToast(result.message || 'Error updating contact information', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving contact:', error);
+                showToast('Error updating contact information', 'error');
+            } finally {
+                setLoading(submitButton, false);
+            }
+        });
+        
+        // Theme Management
+        async function loadTheme() {
+            try {
+                const response = await fetch(`${API_BASE}/theme`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const theme = result.data;
+                        document.getElementById('theme-primary').value = theme.primaryColor || '#121223';
+                        document.getElementById('theme-secondary').value = theme.secondaryColor || '#1e1e32';
+                        document.getElementById('theme-accent').value = theme.accentColor || '#ffaa00';
+                        document.getElementById('theme-font').value = theme.fontFamily || 'Inter, sans-serif';
+                        
+                        // Update preview
+                        const preview = document.getElementById('theme-preview');
+                        preview.style.backgroundColor = theme.primaryColor || '#121223';
+                        preview.querySelector('div').style.backgroundColor = theme.secondaryColor || '#1e1e32';
+                        preview.querySelector('h4').style.color = theme.accentColor || '#ffaa00';
+                        preview.querySelector('button').style.backgroundColor = theme.accentColor || '#ffaa00';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading theme:', error);
+                showToast('Error loading theme settings', 'error');
+            }
+        }
+        
+        document.getElementById('theme-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setLoading(submitButton, true);
+            
+            const themeData = {
+                primaryColor: document.getElementById('theme-primary').value,
+                secondaryColor: document.getElementById('theme-secondary').value,
+                accentColor: document.getElementById('theme-accent').value,
+                fontFamily: document.getElementById('theme-font').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/theme`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(themeData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Theme settings updated successfully!');
+                } else {
+                    showToast(result.message || 'Error updating theme settings', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving theme:', error);
+                showToast('Error updating theme settings', 'error');
+            } finally {
+                setLoading(submitButton, false);
+            }
+        });
+        
+        // Site Info Management
+        async function loadSiteInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/siteinfo`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const siteInfo = result.data;
+                        document.getElementById('siteinfo-title').value = siteInfo.siteTitle || '';
+                        document.getElementById('siteinfo-footer').value = siteInfo.footerText || '';
+                        
+                        if (siteInfo.logo) {
+                            document.getElementById('logo-preview').innerHTML = `
+                                <img src="${API_BASE}${siteInfo.logo}" class="image-preview border rounded">
+                                <p class="text-sm text-gray-500 mt-1">Current logo</p>
+                            `;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading site info:', error);
+                showToast('Error loading site information', 'error');
+            }
+        }
+        
+        document.getElementById('siteinfo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            setLoading(submitButton, true);
+            
+            const formData = new FormData();
+            formData.append('siteTitle', document.getElementById('siteinfo-title').value);
+            formData.append('footerText', document.getElementById('siteinfo-footer').value);
+            
+            const logoFile = document.getElementById('siteinfo-logo').files[0];
+            if (logoFile) {
+                formData.append('logo', logoFile);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/siteinfo`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Site information updated successfully!');
+                    loadSiteInfo(); // Reload to show updated logo
+                    document.getElementById('siteinfo-logo').value = '';
+                } else {
+                    showToast(result.message || 'Error updating site information', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving site info:', error);
+                showToast('Error updating site information', 'error');
+            } finally {
+                setLoading(submitButton, false);
+            }
+        });
+        
         // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', () => {
             loadHero();
@@ -1063,15 +2031,12 @@
                 const accent = document.getElementById('theme-accent').value;
                 
                 const preview = document.getElementById('theme-preview');
-                preview.style.setProperty('--preview-primary', primary);
-                preview.style.setProperty('--preview-secondary', secondary);
-                preview.style.setProperty('--preview-accent', accent);
+                preview.style.backgroundColor = primary;
+                preview.querySelector('div').style.backgroundColor = secondary;
+                preview.querySelector('h4').style.color = accent;
+                preview.querySelector('button').style.backgroundColor = accent;
             });
         });
-        
-        // Note: Due to the extensive length, I've implemented Services and Projects fully.
-        // The same pattern can be applied to Education, Experience, Skills, Testimonials, Contact, Theme, and Site Info.
-        // Each would follow the same CRUD pattern with their respective modals and forms.
     </script>
 </body>
 </html>
