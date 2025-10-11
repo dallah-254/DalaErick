@@ -19,6 +19,7 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: all 0.3s ease;
         }
         
         /* Custom gradient for the hero section background */
@@ -47,6 +48,46 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Hover effects */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Theme variables for dynamic theming */
+        :root {
+            --primary-dark: #121223;
+            --secondary-dark: #1e1e32;
+            --accent: #ffaa00;
+            --text-light: #ffffff;
+            --text-muted: #b0b0c0;
+        }
     </style>
     <script>
         // Custom Tailwind Configuration for the Dark Theme
@@ -73,29 +114,45 @@
 </head>
 
 <body class="bg-primary-dark text-text-light">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-primary-dark z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="loading mx-auto mb-4"></div>
+            <p class="text-text-muted">Loading portfolio...</p>
+        </div>
+    </div>
 
     <!-- Navbar -->
     <header class="sticky top-0 z-50 bg-primary-dark/95 backdrop-blur-sm border-b border-secondary-dark/50 shadow-lg">
         <nav class="main-content mx-auto flex justify-between items-center py-4">
-            <div id="logo" class="text-2xl font-black text-text-light">LOGO</div>
+            <div id="logo" class="text-2xl font-black text-text-light hover:text-accent transition duration-200">LOGO</div>
             <div class="hidden md:flex space-x-8 text-sm font-medium text-text-muted">
-                <a href="#home" class="hover:text-accent transition duration-200">Home</a>
-                <a href="#about" class="hover:text-accent transition duration-200">About Me</a>
-                <a href="#services" class="hover:text-accent transition duration-200">Services</a>
-                <a href="#projects" class="hover:text-accent transition duration-200">Projects</a>
-                <a href="#contact" class="hover:text-accent transition duration-200">Contact</a>
+                <a href="#home" class="hover:text-accent transition duration-200 nav-link">Home</a>
+                <a href="#about" class="hover:text-accent transition duration-200 nav-link">About Me</a>
+                <a href="#services" class="hover:text-accent transition duration-200 nav-link">Services</a>
+                <a href="#projects" class="hover:text-accent transition duration-200 nav-link">Projects</a>
+                <a href="#contact" class="hover:text-accent transition duration-200 nav-link">Contact</a>
             </div>
-            <!-- Mobile Menu Placeholder -->
-            <button class="md:hidden text-text-light text-xl p-2 rounded-full hover:bg-secondary-dark transition">
-                <i class="fas fa-bars"></i>
-            </button>
+            <!-- Mobile Menu -->
+            <div class="md:hidden relative">
+                <button id="mobile-menu-button" class="text-text-light text-xl p-2 rounded-full hover:bg-secondary-dark transition">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div id="mobile-menu" class="absolute right-0 mt-2 w-48 bg-secondary-dark rounded-lg shadow-xl py-2 hidden">
+                    <a href="#home" class="block px-4 py-2 text-text-light hover:bg-primary-dark hover:text-accent transition nav-link">Home</a>
+                    <a href="#about" class="block px-4 py-2 text-text-light hover:bg-primary-dark hover:text-accent transition nav-link">About Me</a>
+                    <a href="#services" class="block px-4 py-2 text-text-light hover:bg-primary-dark hover:text-accent transition nav-link">Services</a>
+                    <a href="#projects" class="block px-4 py-2 text-text-light hover:bg-primary-dark hover:text-accent transition nav-link">Projects</a>
+                    <a href="#contact" class="block px-4 py-2 text-text-light hover:bg-primary-dark hover:text-accent transition nav-link">Contact</a>
+                </div>
+            </div>
         </nav>
     </header>
 
     <main class="main-content mx-auto pt-8">
 
         <!-- Hero Section -->
-        <section id="home" class="hero-bg rounded-2xl p-8 md:p-12 mb-16 overflow-hidden relative shadow-2xl">
+        <section id="home" class="hero-bg rounded-2xl p-8 md:p-12 mb-16 overflow-hidden relative shadow-2xl fade-in-up">
             <div class="grid md:grid-cols-3 gap-8 items-center">
                 
                 <!-- Left Content -->
@@ -106,11 +163,12 @@
                     <p id="hero-description" class="text-lg text-text-muted max-w-2xl">
                         A passionate web developer and graphic designer creating modern, interactive, and beautiful digital experiences. Let's build something amazing together!
                     </p>
-                    <div class="flex space-x-4 items-center pt-2">
-                        <button id="download-resume" class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-accent-glow">
-                            Download Resume
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start sm:items-center pt-2">
+                        <button id="download-resume" class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-accent-glow hover-lift flex items-center">
+                            <i class="fas fa-download mr-2"></i>
+                            <span>Download Resume</span>
                         </button>
-                        <a href="#contact" class="text-text-light hover:text-accent transition duration-300 font-medium">
+                        <a href="#contact" class="text-text-light hover:text-accent transition duration-300 font-medium flex items-center">
                             <i class="fas fa-arrow-right mr-2"></i> Get Started
                         </a>
                     </div>
@@ -118,7 +176,7 @@
 
                 <!-- Right Image -->
                 <div class="md:col-span-1 flex justify-center md:justify-end">
-                    <div class="w-56 h-56 rounded-full overflow-hidden border-4 border-accent/50 p-1 bg-secondary-dark shadow-2xl">
+                    <div class="w-56 h-56 rounded-full overflow-hidden border-4 border-accent/50 p-1 bg-secondary-dark shadow-2xl hover-lift">
                         <img id="profile-image" 
                              src="https://placehold.co/224x224/1e1e32/ffaa00?text=Profile+Pic" 
                              alt="Profile Picture" 
@@ -130,7 +188,7 @@
         </section>
 
         <!-- Services Section -->
-        <section id="services" class="mb-16">
+        <section id="services" class="mb-16 fade-in-up">
             <h2 class="text-3xl font-bold mb-8">My Services</h2>
             <div id="services-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Services will be loaded dynamically -->
@@ -142,7 +200,7 @@
         </section>
 
         <!-- About Me: Education and Stats -->
-        <section id="about" class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <section id="about" class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 fade-in-up">
             <!-- Left Column: Education -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">My Education</h2>
@@ -162,15 +220,15 @@
                     Leveraging a strong foundation in both technical development and artistic design to create holistic digital solutions. My approach blends functionality with aesthetics.
                 </p>
                 <div class="grid grid-cols-3 gap-4 text-center">
-                    <div class="bg-secondary-dark p-4 rounded-lg">
+                    <div class="bg-secondary-dark p-4 rounded-lg hover-lift">
                         <p class="text-4xl font-bold text-accent">300+</p>
                         <p class="text-xs text-text-muted mt-1">Projects Completed</p>
                     </div>
-                    <div class="bg-secondary-dark p-4 rounded-lg">
+                    <div class="bg-secondary-dark p-4 rounded-lg hover-lift">
                         <p class="text-4xl font-bold text-accent">500+</p>
                         <p class="text-xs text-text-muted mt-1">Happy Clients</p>
                     </div>
-                    <div class="bg-secondary-dark p-4 rounded-lg">
+                    <div class="bg-secondary-dark p-4 rounded-lg hover-lift">
                         <p class="text-4xl font-bold text-accent">7+</p>
                         <p class="text-xs text-text-muted mt-1">Years Experience</p>
                     </div>
@@ -179,7 +237,7 @@
         </section>
         
         <!-- Skills & Experience Section -->
-        <section id="skills" class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <section id="skills" class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 fade-in-up">
             <!-- Left Column: Skills -->
             <div>
                 <h2 class="text-2xl font-bold mb-6">My Skills</h2>
@@ -206,7 +264,7 @@
         </section>
 
         <!-- Latest Projects Section -->
-        <section id="projects" class="mb-16">
+        <section id="projects" class="mb-16 fade-in-up">
             <h2 class="text-3xl font-bold mb-8">My Latest Projects</h2>
             <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Projects will be loaded dynamically -->
@@ -218,7 +276,7 @@
         </section>
         
         <!-- Testimonials Section -->
-        <section id="testimonials" class="mb-16">
+        <section id="testimonials" class="mb-16 fade-in-up">
             <h2 class="text-3xl font-bold mb-8">Testimonials</h2>
             <div id="testimonials-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Testimonials will be loaded dynamically -->
@@ -230,9 +288,9 @@
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="mb-16">
+        <section id="contact" class="mb-16 fade-in-up">
             <h2 class="text-3xl font-bold mb-8">Let's Connect</h2>
-            <div class="bg-secondary-dark rounded-xl p-8 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-secondary-dark rounded-xl p-8 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-8 hover-lift">
                 
                 <!-- Contact Details (Left Column) -->
                 <div class="lg:col-span-1 space-y-6">
@@ -269,9 +327,15 @@
                     </div>
                     
                     <div class="flex space-x-4 pt-4">
-                        <a id="linkedin-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-linkedin"></i></a>
-                        <a id="github-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-github"></i></a>
-                        <a id="twitter-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl"><i class="fab fa-twitter"></i></a>
+                        <a id="linkedin-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl hover-lift">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a id="github-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl hover-lift">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a id="twitter-link" href="#" class="text-text-light hover:text-accent transition duration-200 text-xl hover-lift">
+                            <i class="fab fa-twitter"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -279,12 +343,17 @@
                 <div class="lg:col-span-2">
                     <form class="space-y-4" id="contact-form">
                         <div class="grid sm:grid-cols-2 gap-4">
-                            <input type="text" placeholder="Name" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required>
-                            <input type="email" placeholder="Email" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required>
+                            <div>
+                                <input type="text" placeholder="Name" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent transition duration-200" required>
+                            </div>
+                            <div>
+                                <input type="email" placeholder="Email" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent transition duration-200" required>
+                            </div>
                         </div>
-                        <input type="text" placeholder="Subject" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required>
-                        <textarea placeholder="Your Message" rows="5" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent" required></textarea>
-                        <button type="submit" class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 w-full sm:w-auto shadow-accent-glow">
+                        <input type="text" placeholder="Subject" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent transition duration-200" required>
+                        <textarea placeholder="Your Message" rows="5" class="w-full bg-primary-dark border border-secondary-dark p-3 rounded-lg focus:ring-accent focus:border-accent transition duration-200" required></textarea>
+                        <button type="submit" class="bg-accent text-primary-dark font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition duration-300 w-full sm:w-auto shadow-accent-glow hover-lift flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i>
                             Send Message
                         </button>
                     </form>
@@ -297,222 +366,565 @@
     <!-- Footer -->
     <footer class="bg-primary-dark border-t border-secondary-dark/50 py-8">
         <div class="main-content mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-            <div id="footer-logo" class="text-3xl font-black text-text-light mb-4 md:mb-0">LOGO</div>
+            <div id="footer-logo" class="text-3xl font-black text-text-light mb-4 md:mb-0 hover:text-accent transition duration-200">LOGO</div>
             <p id="footer-text" class="text-sm text-text-muted">
                 &copy; 2024 Dallah. All rights reserved. | Developed with passion.
             </p>
-                        <a href="mng.html">x</a>
-
-            <a href="#home" class="text-accent text-lg hover:opacity-80 transition duration-200 mt-4 md:mt-0">
-                <i class="fas fa-arrow-up"></i>
-            </a>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <a href="mng.html" class="text-accent hover:opacity-80 transition duration-200 text-sm bg-secondary-dark px-3 py-1 rounded-lg hover-lift">
+                    <i class="fas fa-cog mr-1"></i> Admin Panel
+                </a>
+                <a href="#home" class="text-accent text-lg hover:opacity-80 transition duration-200 hover-lift">
+                    <i class="fas fa-arrow-up"></i>
+                </a>
+            </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // Load portfolio data from backend
+        // Global state
+        let portfolioData = {};
+        let swiperInstances = [];
+
+        // Enhanced portfolio data loading
         async function loadPortfolioData() {
             try {
+                showLoading(true);
+                
                 const response = await fetch(`${API_BASE}/portfolio`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                portfolioData = data;
                 
-                // Update hero section
-                if (data.hero) {
-                    document.getElementById('hero-name').textContent = data.hero.name || 'Dallah';
-                    document.getElementById('hero-description').textContent = data.hero.description || 'A passionate web developer and graphic designer...';
-                    if (data.hero.profileImage) {
-                        document.getElementById('profile-image').src = 'https://portfolio-backend-8xqk.onrender.com' + data.hero.profileImage;
-                    }
-                    if (data.hero.resume) {
-                        document.getElementById('download-resume').addEventListener('click', () => {
-                            window.open('https://portfolio-backend-8xqk.onrender.com' + data.hero.resume, '_blank');
-                        });
-                    }
-                }
-                
-                // Update services
-                if (data.services && data.services.length > 0) {
-                    const servicesContainer = document.getElementById('services-container');
-                    servicesContainer.innerHTML = data.services.map(service => `
-                        <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group">
-                            <i class="${service.icon || 'fas fa-desktop'} text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
-                            <h3 class="text-xl font-bold mb-2">${service.title}</h3>
-                            <p class="text-text-muted text-sm">${service.description}</p>
-                            <a href="#" class="text-accent text-sm font-semibold mt-4 block">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
-                        </div>
-                    `).join('');
-                }
-                
-                // Update education
-                if (data.education && data.education.length > 0) {
-                    const educationContainer = document.getElementById('education-container');
-                    educationContainer.innerHTML = data.education.map(edu => `
-                        <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent shadow-md">
-                            <p class="text-xs text-text-muted mb-1">${edu.period}</p>
-                            <h4 class="text-lg font-semibold">${edu.degree}</h4>
-                            <p class="text-sm text-text-muted">${edu.institution}</p>
-                        </div>
-                    `).join('');
-                }
-                
-                // Update skills
-                if (data.skills && data.skills.length > 0) {
-                    const skillsContainer = document.getElementById('skills-container');
-                    skillsContainer.innerHTML = data.skills.map(skill => `
-                        <div class="skill-item">
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm">${skill.name}</span>
-                                <span class="text-sm font-semibold">${skill.percentage}%</span>
-                            </div>
-                            <div class="w-full bg-secondary-dark rounded-full h-2.5">
-                                <div class="bg-accent h-2.5 rounded-full" style="width: ${skill.percentage}%"></div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-                
-                // Update experience
-                if (data.experience && data.experience.length > 0) {
-                    const experienceContainer = document.getElementById('experience-container');
-                    experienceContainer.innerHTML = data.experience.map(exp => `
-                        <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md">
-                            <p class="text-xs text-accent mb-1">${exp.period}</p>
-                            <h4 class="text-lg font-semibold">${exp.position}</h4>
-                            <p class="text-sm text-text-muted">${exp.company} - ${exp.location}</p>
-                        </div>
-                    `).join('');
-                }
-                
-                // Update projects
-                if (data.projects && data.projects.length > 0) {
-                    const projectsContainer = document.getElementById('projects-container');
-                    projectsContainer.innerHTML = data.projects.map(project => `
-                        <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300">
-                            ${project.images && project.images.length > 0 ? 
-                                `<div class="swiper project-swiper-${project._id} rounded-lg mb-4 w-full aspect-video">
-                                    <div class="swiper-wrapper">
-                                        ${project.images.map(img => `
-                                            <div class="swiper-slide">
-                                                <img src="https://portfolio-backend-8xqk.onrender.com${img}" 
-                                                     alt="${project.title}" 
-                                                     class="w-full h-full object-cover" />
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    ${project.images.length > 1 ? `
-                                        <div class="swiper-pagination"></div>
-                                        <div class="swiper-button-next"></div>
-                                        <div class="swiper-button-prev"></div>
-                                    ` : ''}
-                                </div>` : 
-                                `<img src="https://placehold.co/600x400/1e1e32/fff?text=Project+Image" 
-                                     alt="${project.title}" 
-                                     class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80" />`
-                            }
-                            <h3 class="text-xl font-bold mb-1">${project.title}</h3>
-                            <p class="text-text-muted text-sm">${project.description}</p>
-                            <a href="${project.link || '#'}" class="text-accent text-sm font-semibold mt-3 inline-block">View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
-                        </div>
-                    `).join('');
-                    
-                    // Initialize Swiper for projects with multiple images
-                    data.projects.forEach(project => {
-                        if (project.images && project.images.length > 1) {
-                            new Swiper(`.project-swiper-${project._id}`, {
-                                loop: true,
-                                pagination: {
-                                    el: `.project-swiper-${project._id} .swiper-pagination`,
-                                    clickable: true,
-                                },
-                                navigation: {
-                                    nextEl: `.project-swiper-${project._id} .swiper-button-next`,
-                                    prevEl: `.project-swiper-${project._id} .swiper-button-prev`,
-                                },
-                            });
-                        }
-                    });
-                }
-                
-                // Update testimonials
-                if (data.testimonials && data.testimonials.length > 0) {
-                    const testimonialsContainer = document.getElementById('testimonials-container');
-                    testimonialsContainer.innerHTML = data.testimonials.map(testimonial => `
-                        <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg">
-                            <div class="flex items-center mb-4">
-                                <img src="${testimonial.avatar ? 'https://portfolio-backend-8xqk.onrender.com' + testimonial.avatar : 'https://placehold.co/50x50/333/fff?text=C'}" 
-                                     alt="${testimonial.name}" 
-                                     class="rounded-full mr-3 w-12 h-12 object-cover">
-                                <div>
-                                    <p class="font-semibold">${testimonial.name}</p>
-                                    <p class="text-xs text-text-muted">${testimonial.position}, ${testimonial.company}</p>
-                                </div>
-                            </div>
-                            <p class="text-sm italic text-text-muted">"${testimonial.content}"</p>
-                        </div>
-                    `).join('');
-                }
-                
-                // Update contact info
-                if (data.contact) {
-                    document.getElementById('contact-phone').textContent = data.contact.phone || '+1 (555) 123-4567';
-                    document.getElementById('contact-email').textContent = data.contact.email || 'Dallah@example.com';
-                    document.getElementById('contact-location').textContent = data.contact.location || 'San Francisco, CA';
-                    
-                    if (data.contact.socialLinks) {
-                        if (data.contact.socialLinks.linkedin) {
-                            document.getElementById('linkedin-link').href = data.contact.socialLinks.linkedin;
-                        }
-                        if (data.contact.socialLinks.github) {
-                            document.getElementById('github-link').href = data.contact.socialLinks.github;
-                        }
-                        if (data.contact.socialLinks.twitter) {
-                            document.getElementById('twitter-link').href = data.contact.socialLinks.twitter;
-                        }
-                    }
-                }
-                
-                // Update site info
-                if (data.siteInfo) {
-                    document.getElementById('logo').textContent = data.siteInfo.siteTitle || 'LOGO';
-                    document.getElementById('footer-logo').textContent = data.siteInfo.siteTitle || 'LOGO';
-                    document.getElementById('footer-text').textContent = data.siteInfo.footerText || '&copy; 2024 Dallah. All rights reserved. | Developed with passion.';
-                    
-                    if (data.siteInfo.logo) {
-                        // If you have a logo image, you could update it here
-                        // document.getElementById('logo').innerHTML = `<img src="${API_BASE}${data.siteInfo.logo}" alt="Logo" class="h-8">`;
-                    }
-                }
-                
-                // Update theme
-                if (data.theme) {
-                    document.documentElement.style.setProperty('--primary-dark', data.theme.primaryColor || '#121223');
-                    document.documentElement.style.setProperty('--secondary-dark', data.theme.secondaryColor || '#1e1e32');
-                    document.documentElement.style.setProperty('--accent', data.theme.accentColor || '#ffaa00');
-                    
-                    if (data.theme.fontFamily) {
-                        document.body.style.fontFamily = data.theme.fontFamily;
-                    }
+                if (data.success) {
+                    updateAllSections(data);
+                    initializeAnimations();
+                    showLoading(false);
+                } else {
+                    throw new Error('Failed to load portfolio data');
                 }
                 
             } catch (error) {
                 console.error('Error loading portfolio data:', error);
+                showErrorState();
+                showLoading(false);
             }
         }
-        
-        // Initialize the page
+
+        // Show/hide loading screen
+        function showLoading(show) {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (show) {
+                loadingScreen.classList.remove('hidden');
+            } else {
+                loadingScreen.classList.add('hidden');
+            }
+        }
+
+        // Show error state
+        function showErrorState() {
+            const heroDesc = document.getElementById('hero-description');
+            if (heroDesc) {
+                heroDesc.textContent = 'Unable to load portfolio data. Please check your connection and try again.';
+                heroDesc.classList.add('text-red-400');
+            }
+        }
+
+        // Update all sections with portfolio data
+        function updateAllSections(data) {
+            updateHeroSection(data.hero);
+            updateServices(data.services);
+            updateEducation(data.education);
+            updateSkills(data.skills);
+            updateExperience(data.experience);
+            updateProjects(data.projects);
+            updateTestimonials(data.testimonials);
+            updateContact(data.contact);
+            updateSiteInfo(data.siteInfo);
+            applyTheme(data.theme);
+        }
+
+        // Enhanced Hero Section Update
+        function updateHeroSection(hero) {
+            if (hero) {
+                // Update name
+                const heroName = document.getElementById('hero-name');
+                if (heroName && hero.name) {
+                    heroName.textContent = hero.name;
+                }
+                
+                // Update description
+                const heroDescription = document.getElementById('hero-description');
+                if (heroDescription && hero.description) {
+                    heroDescription.textContent = hero.description;
+                }
+                
+                // Update profile image with enhanced error handling
+                const profileImage = document.getElementById('profile-image');
+                if (profileImage) {
+                    if (hero.profileImage) {
+                        profileImage.src = 'https://portfolio-backend-8xqk.onrender.com' + hero.profileImage;
+                        profileImage.alt = `${hero.name || 'Dallah'} - Profile Picture`;
+                        
+                        // Add loading state for image
+                        profileImage.onload = function() {
+                            this.classList.remove('opacity-0');
+                        };
+                        profileImage.onerror = function() {
+                            this.src = 'https://placehold.co/224x224/1e1e32/ffaa00?text=Avatar';
+                            this.alt = 'Default Avatar';
+                        };
+                    }
+                }
+                
+                // Update resume download button
+                const resumeBtn = document.getElementById('download-resume');
+                if (resumeBtn) {
+                    if (hero.resume) {
+                        resumeBtn.onclick = () => {
+                            window.open('https://portfolio-backend-8xqk.onrender.com' + hero.resume, '_blank');
+                        };
+                        resumeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        resumeBtn.onclick = () => {
+                            alert('Resume not available yet. Please check back later.');
+                        };
+                        resumeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                }
+            }
+        }
+
+        // Update Services Section
+        function updateServices(services) {
+            const container = document.getElementById('services-container');
+            if (container && services && services.length > 0) {
+                container.innerHTML = services.map(service => `
+                    <div class="bg-secondary-dark p-8 rounded-xl shadow-lg border border-secondary-dark hover:border-accent transition duration-300 group hover-lift">
+                        <i class="${service.icon || 'fas fa-desktop'} text-5xl text-accent mb-4 transition group-hover:scale-105"></i>
+                        <h3 class="text-xl font-bold mb-2">${service.title}</h3>
+                        <p class="text-text-muted text-sm">${service.description}</p>
+                        <div class="text-accent text-sm font-semibold mt-4 flex items-center group-hover:translate-x-1 transition duration-200">
+                            Read More <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update Education Section
+        function updateEducation(education) {
+            const container = document.getElementById('education-container');
+            if (container && education && education.length > 0) {
+                container.innerHTML = education.map(edu => `
+                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent shadow-md hover-lift">
+                        <p class="text-xs text-text-muted mb-1">${edu.period}</p>
+                        <h4 class="text-lg font-semibold">${edu.degree}</h4>
+                        <p class="text-sm text-text-muted">${edu.institution}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update Skills Section
+        function updateSkills(skills) {
+            const container = document.getElementById('skills-container');
+            if (container && skills && skills.length > 0) {
+                container.innerHTML = skills.map(skill => `
+                    <div class="skill-item hover-lift">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium">${skill.name}</span>
+                            <span class="text-sm font-semibold text-accent">${skill.percentage}%</span>
+                        </div>
+                        <div class="w-full bg-secondary-dark rounded-full h-2.5">
+                            <div class="bg-accent h-2.5 rounded-full transition-all duration-1000 ease-out" 
+                                 style="width: 0%" 
+                                 data-percentage="${skill.percentage}"></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Animate skill bars after a delay
+                setTimeout(() => {
+                    document.querySelectorAll('[data-percentage]').forEach(bar => {
+                        const percentage = bar.getAttribute('data-percentage');
+                        bar.style.width = percentage + '%';
+                    });
+                }, 500);
+            }
+        }
+
+        // Update Experience Section
+        function updateExperience(experience) {
+            const container = document.getElementById('experience-container');
+            if (container && experience && experience.length > 0) {
+                container.innerHTML = experience.map(exp => `
+                    <div class="bg-secondary-dark p-6 rounded-lg border-l-4 border-accent/70 shadow-md hover-lift">
+                        <p class="text-xs text-accent mb-1">${exp.period}</p>
+                        <h4 class="text-lg font-semibold">${exp.position}</h4>
+                        <p class="text-sm text-text-muted">${exp.company} - ${exp.location}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Enhanced Projects Section with Swiper
+        function updateProjects(projects) {
+            const container = document.getElementById('projects-container');
+            if (container && projects && projects.length > 0) {
+                container.innerHTML = projects.map(project => `
+                    <div class="bg-secondary-dark rounded-xl p-6 shadow-xl group hover:shadow-accent-glow/30 transition duration-300 hover-lift">
+                        ${project.images && project.images.length > 0 ? 
+                            `<div class="swiper project-swiper rounded-lg mb-4 w-full aspect-video" data-project-id="${project._id}">
+                                <div class="swiper-wrapper">
+                                    ${project.images.map((img, index) => `
+                                        <div class="swiper-slide">
+                                            <img src="https://portfolio-backend-8xqk.onrender.com${img}" 
+                                                 alt="${project.title} - Image ${index + 1}" 
+                                                 class="w-full h-full object-cover rounded-lg"
+                                                 loading="lazy" />
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${project.images.length > 1 ? `
+                                    <div class="swiper-pagination"></div>
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                ` : ''}
+                            </div>` : 
+                            `<img src="https://placehold.co/600x400/1e1e32/fff?text=Project+Image" 
+                                 alt="${project.title}" 
+                                 class="rounded-lg mb-4 w-full aspect-video object-cover transition duration-300 group-hover:opacity-80"
+                                 loading="lazy" />`
+                        }
+                        <h3 class="text-xl font-bold mb-1">${project.title}</h3>
+                        <p class="text-text-muted text-sm mb-3">${project.description}</p>
+                        ${project.category ? `<span class="inline-block bg-accent/20 text-accent text-xs px-2 py-1 rounded mb-2">${project.category}</span>` : ''}
+                        <div class="flex justify-between items-center mt-4">
+                            <a href="${project.link || '#'}" 
+                               class="text-accent text-sm font-semibold inline-flex items-center hover:underline transition duration-200 ${!project.link ? 'opacity-50 cursor-not-allowed' : ''}">
+                                View Details <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                            </a>
+                            ${project.link ? `<span class="text-xs text-text-muted">Live Project</span>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Initialize Swipers after a short delay
+                setTimeout(initializeSwipers, 100);
+            }
+        }
+
+        // Initialize Swiper instances for projects
+        function initializeSwipers() {
+            // Clear existing swiper instances
+            swiperInstances.forEach(swiper => swiper.destroy());
+            swiperInstances = [];
+
+            document.querySelectorAll('.project-swiper').forEach(swiperElement => {
+                const swiper = new Swiper(swiperElement, {
+                    loop: true,
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: swiperElement.querySelector('.swiper-pagination'),
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: swiperElement.querySelector('.swiper-button-next'),
+                        prevEl: swiperElement.querySelector('.swiper-button-prev'),
+                    },
+                    effect: 'slide',
+                    speed: 600,
+                });
+                swiperInstances.push(swiper);
+            });
+        }
+
+        // Update Testimonials Section
+        function updateTestimonials(testimonials) {
+            const container = document.getElementById('testimonials-container');
+            if (container && testimonials && testimonials.length > 0) {
+                container.innerHTML = testimonials.map(testimonial => `
+                    <div class="bg-secondary-dark p-6 rounded-xl border-t-4 border-accent shadow-lg hover-lift">
+                        <div class="flex items-center mb-4">
+                            <div class="relative">
+                                <img src="${testimonial.avatar ? 'https://portfolio-backend-8xqk.onrender.com' + testimonial.avatar : 'https://placehold.co/50x50/333/fff?text=C'}" 
+                                     alt="${testimonial.name}" 
+                                     class="rounded-full mr-3 w-12 h-12 object-cover"
+                                     loading="lazy">
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-accent rounded-full border-2 border-secondary-dark"></div>
+                            </div>
+                            <div>
+                                <p class="font-semibold">${testimonial.name}</p>
+                                <p class="text-xs text-text-muted">${testimonial.position}${testimonial.company ? ', ' + testimonial.company : ''}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm italic text-text-muted">"${testimonial.content}"</p>
+                        <div class="flex text-accent mt-3">
+                            ${'★'.repeat(5)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update Contact Section
+        function updateContact(contact) {
+            if (contact) {
+                // Update phone
+                const phoneElement = document.getElementById('contact-phone');
+                if (phoneElement && contact.phone) {
+                    phoneElement.textContent = contact.phone;
+                    phoneElement.href = `tel:${contact.phone}`;
+                }
+                
+                // Update email
+                const emailElement = document.getElementById('contact-email');
+                if (emailElement && contact.email) {
+                    emailElement.textContent = contact.email;
+                    emailElement.href = `mailto:${contact.email}`;
+                }
+                
+                // Update location
+                const locationElement = document.getElementById('contact-location');
+                if (locationElement && contact.location) {
+                    locationElement.textContent = contact.location;
+                }
+                
+                // Update social links
+                if (contact.socialLinks) {
+                    const linkedinLink = document.getElementById('linkedin-link');
+                    const githubLink = document.getElementById('github-link');
+                    const twitterLink = document.getElementById('twitter-link');
+                    
+                    if (linkedinLink && contact.socialLinks.linkedin) {
+                        linkedinLink.href = contact.socialLinks.linkedin;
+                    }
+                    if (githubLink && contact.socialLinks.github) {
+                        githubLink.href = contact.socialLinks.github;
+                    }
+                    if (twitterLink && contact.socialLinks.twitter) {
+                        twitterLink.href = contact.socialLinks.twitter;
+                    }
+                }
+            }
+        }
+
+        // Update Site Information
+        function updateSiteInfo(siteInfo) {
+            if (siteInfo) {
+                // Update logo
+                const logo = document.getElementById('logo');
+                const footerLogo = document.getElementById('footer-logo');
+                if (logo && siteInfo.siteTitle) {
+                    logo.textContent = siteInfo.siteTitle;
+                }
+                if (footerLogo && siteInfo.siteTitle) {
+                    footerLogo.textContent = siteInfo.siteTitle;
+                }
+                
+                // Update footer text
+                const footerText = document.getElementById('footer-text');
+                if (footerText && siteInfo.footerText) {
+                    footerText.innerHTML = siteInfo.footerText;
+                }
+                
+                // Update logo image if available
+                if (siteInfo.logo) {
+                    // You could update to use an image logo here
+                    // const logoImg = document.createElement('img');
+                    // logoImg.src = 'https://portfolio-backend-8xqk.onrender.com' + siteInfo.logo;
+                    // logoImg.alt = siteInfo.siteTitle + ' Logo';
+                    // logoImg.className = 'h-8';
+                    // logo.innerHTML = '';
+                    // logo.appendChild(logoImg);
+                }
+            }
+        }
+
+        // Apply Theme Settings
+        function applyTheme(theme) {
+            if (theme) {
+                // Update CSS variables
+                const root = document.documentElement;
+                root.style.setProperty('--primary-dark', theme.primaryColor || '#121223');
+                root.style.setProperty('--secondary-dark', theme.secondaryColor || '#1e1e32');
+                root.style.setProperty('--accent', theme.accentColor || '#ffaa00');
+                
+                // Update font family
+                if (theme.fontFamily) {
+                    document.body.style.fontFamily = theme.fontFamily;
+                }
+                
+                // Update specific elements
+                document.querySelectorAll('.bg-primary-dark').forEach(el => {
+                    el.style.backgroundColor = theme.primaryColor || '#121223';
+                });
+                
+                document.querySelectorAll('.bg-secondary-dark').forEach(el => {
+                    el.style.backgroundColor = theme.secondaryColor || '#1e1e32';
+                });
+                
+                document.querySelectorAll('.text-accent').forEach(el => {
+                    el.style.color = theme.accentColor || '#ffaa00';
+                });
+            }
+        }
+
+        // Initialize animations and interactions
+        function initializeAnimations() {
+            // Intersection Observer for fade-in animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-up');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all sections
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+
+            // Mobile menu functionality
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // Close mobile menu if open
+                        if (mobileMenu) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            // Contact form handling
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const submitButton = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    
+                    // Show loading state
+                    submitButton.innerHTML = '<div class="loading mr-2"></div>Sending...';
+                    submitButton.disabled = true;
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // Show success message
+                        showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                        
+                        // Reset form
+                        contactForm.reset();
+                        
+                        // Restore button
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                    }, 2000);
+                });
+            }
+
+            // Add hover effects to interactive elements
+            document.querySelectorAll('.hover-lift').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-transform duration-300 ${
+                type === 'success' ? 'bg-green-600' : 
+                type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+            } text-white`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'
+                    } mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        // Initialize the portfolio when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             loadPortfolioData();
             
-            // Contact form submission
-            document.getElementById('contact-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                // In a real implementation, you would send this to your backend
-                alert('Message sent! (This is a demo - in a real site, this would send an email)');
-                e.target.reset();
+            // Add scroll event for navbar background
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.classList.add('bg-primary-dark');
+                } else {
+                    header.classList.remove('bg-primary-dark');
+                }
             });
         });
+
+        // Export portfolio data for debugging
+        window.getPortfolioData = () => portfolioData;
     </script>
 </body>
 </html>
