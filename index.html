@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erick Dala | Cloud & Full-Stack Developer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS with additions for mouse animation and graphs */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #06b6d4;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--secondary);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .cursor-click {
+            animation: clickEffect 0.3s ease;
+        }
+
+        @keyframes clickEffect {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.8); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, #1e293b 100%);
+            color: white;
+            padding: 80px 0 60px;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            margin-bottom: 60px;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--accent), #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .contact-item i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Metrics Section */
+        .metrics {
+            padding: 40px 0;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin: 40px 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .metric-item {
+            padding: 20px;
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 50px;
+            color: var(--secondary);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            border-radius: 2px;
+        }
+
+        /* About */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .highlight-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .skill-category {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--light-gray);
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-category h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: var(--light);
+            color: var(--secondary);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .skill-tag:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Charts */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .chart-card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Projects */
+        .projects-container {
+            display: grid;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--light-gray);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .project-carousel {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            background: var(--secondary);
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-dot.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .project-content {
+            padding: 30px;
+        }
+
+        .project-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .project-date {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tech-tag {
+            background: var(--light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--light-gray);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Education Grid */
+        .education-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .education-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .education-card h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .education-date {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .education-card ul {
+            padding-left: 20px;
+            color: var(--gray);
+        }
+
+        .education-card li {
+            margin-bottom: 8px;
+        }
+
+        /* Experience Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--primary));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 80px;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .timeline-date {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .timeline-content h4 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .timeline-content h5 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .timeline-content ul {
+            padding-left: 20px;
+            color: var(--gray);
+        }
+
+        .timeline-content li {
+            margin-bottom: 8px;
+        }
+
+        /* References & Languages */
+        .references-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .reference-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .reference-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .reference-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .reference-role {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .languages-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .language-item {
+            text-align: center;
+        }
+
+        .language-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 90%, var(--light-gray) 90%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .language-circle::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .language-circle span {
+            position: relative;
+            z-index: 1;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .language-item p {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* Additional Data Cards */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .data-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .data-card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            color: white;
+            padding: 50px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 0 40px;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.4rem;
+            }
+            
+            section {
+                padding: 60px 0;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                padding-left: 60px;
+            }
+            
+            .timeline-icon {
+                left: 5px;
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+            
+            .cursor, .cursor-follower {
+                display: none;
+            }
+            
+            body {
+                cursor: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .project-links {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .metric-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>ERICK DALA</h1>
+                    <div class="subtitle">CLOUD ARCHITECT | FULL-STACK DEVELOPER | DEVOPS ENGINEER</div>
+                    
+                    <div class="badges">
+                        <span class="hero-badge"><i class="fas fa-certificate"></i> AWS Certified Solutions Architect</span>
+                        <span class="hero-badge"><i class="fas fa-code"></i> Full-Stack Developer</span>
+                        <span class="hero-badge"><i class="fas fa-cloud"></i> Cloud Specialist</span>
+                        <span class="hero-badge"><i class="fas fa-robot"></i> AI/ML Integration</span>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+254 796 605 409</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Nairobi, Kenya</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>dallaherick0@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>BSc Computer Science (2022-2026)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Metrics Section -->
+    <div class="container">
+        <div class="metrics">
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">25+</div>
+                    <div class="metric-label">Projects Completed</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">15+</div>
+                    <div class="metric-label">Technologies Mastered</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">98%</div>
+                    <div class="metric-label">Client Satisfaction</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">30%</div>
+                    <div class="metric-label">Release Time Reduced</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">ABOUT ME</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p><strong>AWS Certified Solutions Architect</strong> and <strong>Cloud-Centric Full-Stack Developer</strong> with a comprehensive foundation in computer science and data science principles. Currently pursuing a BSc in Computer Science while actively building and deploying scalable cloud solutions.</p>
+                    
+                    <p>Expertise in <strong>architecting, deploying, and automating secure, scalable cloud infrastructure</strong> on AWS combined with building resilient full-stack applications using modern frameworks. Proven track record in <strong>end-to-end project lifecycle management</strong>—from cloud architecture design using services like EC2, S3, Lambda, and RDS to hands-on implementation with containerization (Docker), and CI/CD pipelines (AWS CodePipeline, Jenkins).</p>
+                    
+                    <p>Passionate about <strong>leveraging cloud technologies and AI-driven tools</strong> to solve complex business challenges. Specialized in <strong>bridging development and operations</strong> through DevOps practices, ensuring efficient, reliable, and cost-effective solutions. Committed to continuous learning and staying at the forefront of cloud computing trends.</p>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3><i class="fas fa-bullseye"></i> Career Objectives</h3>
+                    <ul>
+                        <li>Secure a Cloud Engineer/DevOps role in innovative tech company</li>
+                        <li>Architect scalable cloud solutions for 10,000+ users</li>
+                        <li>Lead cloud migration projects reducing costs by 40%</li>
+                        <li>Mentor junior developers in cloud best practices</li>
+                        <li>Contribute to open-source cloud projects</li>
+                        <li>Obtain AWS Professional certification by 2024</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Skills with Charts -->
+    <section id="skills" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">TECHNICAL SKILLS</h2>
+            
+            
+            <div class="skills-grid">
+                <!-- Cloud & DevOps -->
+                <div class="skill-category">
+                    <h3><i class="fas fa-cloud"></i> Cloud & DevOps</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AWS Core Services (EC2, S3, Lambda, RDS, IAM)</span>
+                        <span class="skill-tag">Infrastructure as Code (Terraform, AWS CDK)</span>
+                        <span class="skill-tag">CI/CD Automation (GitHub Actions, Jenkins)</span>
+                        <span class="skill-tag">Containerization (Docker, Kubernetes)</span>
+                        <span class="skill-tag">Monitoring (CloudWatch, Prometheus, Grafana)</span>
+                        <span class="skill-tag">AWS Route 53, VPC, CloudFront</span>
+                        <span class="skill-tag">Serverless Architecture & Microservices</span>
+                        <span class="skill-tag">Cloud Security & Compliance</span>
+                        <span class="skill-tag">Load Balancing & Auto-scaling</span>
+                        <span class="skill-tag">Disaster Recovery Strategies</span>
+                        <span class="skill-tag">AWS Elastic Beanstalk</span>
+                        <span class="skill-tag">AWS CloudFormation</span>
+                        <span class="skill-tag">AWS ECS/EKS</span>
+                        <span class="skill-tag">AWS SNS/SQS</span>
+                        <span class="skill-tag">AWS DynamoDB</span>
+                    </div>
+                </div>
+                
+                <!-- Programming & Scripting -->
+                <div class="skill-category">
+                    <h3><i class="fas fa-code"></i> Programming & Scripting</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">JavaScript/TypeScript (ES6+)</span>
+                        <span class="skill-tag">Python (Advanced)</span>
+                        <span class="skill-tag">Node.js Runtime</span>
+                        <span class="skill-tag">SQL & Database Querying</span>
+                        <span class="skill-tag">Bash/Shell Scripting</span>
+                        <span class="skill-tag">React.js & Next.js Frameworks</span>
+                        <span class="skill-tag">Vue.js Progressive Framework</span>
+                        <span class="skill-tag">Express.js & NestJS Backend</span>
+                        <span class="skill-tag">React Native Mobile Development</span>
+                        <span class="skill-tag">Flutter Cross-Platform</span>
+                        <span class="skill-tag">TensorFlow.js for AI/ML</span>
+                        <span class="skill-tag">OpenAI API Integration</span>
+                        <span class="skill-tag">LangChain for LLM Applications</span>
+                        <span class="skill-tag">REST & GraphQL API Design</span>
+                        <span class="skill-tag">WebSocket Programming</span>
+                        <span class="skill-tag">HTML/CSS/SCSS</span>
+                        <span class="skill-tag">Java (Basic)</span>
+                        <span class="skill-tag">C++ (Academic)</span>
+                    </div>
+                </div>
+                
+                <!-- Frontend Development -->
+                <div class="skill-category">
+                    <h3><i class="fas fa-paint-brush"></i> Frontend Development</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">HTML5 & Semantic Markup</span>
+                        <span class="skill-tag">CSS3 & Advanced Styling</span>
+                        <span class="skill-tag">Sass/SCSS Preprocessors</span>
+                        <span class="skill-tag">Tailwind CSS Framework</span>
+                        <span class="skill-tag">Bootstrap Component Library</span>
+                        <span class="skill-tag">Material-UI Design System</span>
+                        <span class="skill-tag">Responsive & Mobile-First Design</span>
+                        <span class="skill-tag">State Management (Redux, Zustand)</span>
+                        <span class="skill-tag">Context API & Hooks</span>
+                        <span class="skill-tag">Component-Based Architecture</span>
+                        <span class="skill-tag">Build Tools (Vite, Webpack, Babel)</span>
+                        <span class="skill-tag">Testing (Jest, Cypress, React Testing Library)</span>
+                        <span class="skill-tag">Performance Optimization</span>
+                        <span class="skill-tag">Web Accessibility (WCAG)</span>
+                        <span class="skill-tag">PWA & Service Workers</span>
+                        <span class="skill-tag">Web Components</span>
+                        <span class="skill-tag">Animation Libraries (GSAP, Framer Motion)</span>
+                    </div>
+                </div>
+                
+                <!-- Backend & Databases -->
+                <div class="skill-category">
+                    <h3><i class="fas fa-database"></i> Backend & Databases</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Node.js & Express.js</span>
+                        <span class="skill-tag">FastAPI (Python)</span>
+                        <span class="skill-tag">NestJS Framework</span>
+                        <span class="skill-tag">PostgreSQL & Advanced SQL</span>
+                        <span class="skill-tag">MongoDB NoSQL Database</span>
+                        <span class="skill-tag">AWS DynamoDB</span>
+                        <span class="skill-tag">Redis Caching</span>
+                        <span class="skill-tag">Database Design & Normalization</span>
+                        <span class="skill-tag">Query Optimization</span>
+                        <span class="skill-tag">API Security (JWT, OAuth)</span>
+                        <span class="skill-tag">WebSocket Real-time Communication</span>
+                        <span class="skill-tag">Serverless Functions (Lambda)</span>
+                        <span class="skill-tag">Message Queues (SQS, RabbitMQ)</span>
+                        <span class="skill-tag">Data Modeling & Architecture</span>
+                        <span class="skill-tag">ORM/ODM (Prisma, Mongoose, Sequelize)</span>
+                        <span class="skill-tag">GraphQL with Apollo</span>
+                        <span class="skill-tag">RESTful API Design</span>
+                        <span class="skill-tag">MySQL & MariaDB</span>
+                        <span class="skill-tag">Firebase & Firestore</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Data Section -->
+    <section id="additional-data">
+        <div class="container">
+            <h2 class="section-title">ADDITIONAL EXPERTISE</h2>
+            
+            <div class="data-cards">
+                <div class="data-card">
+                    <h3><i class="fas fa-tools"></i> Development Tools</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Git & GitHub/GitLab</span>
+                        <span class="skill-tag">VS Code & JetBrains IDE</span>
+                        <span class="skill-tag">Postman & Insomnia</span>
+                        <span class="skill-tag">Docker & Docker Compose</span>
+                        <span class="skill-tag">Kubernetes & Helm</span>
+                        <span class="skill-tag">AWS CLI & SDK</span>
+                        <span class="skill-tag">Terraform & Ansible</span>
+                        <span class="skill-tag">Jenkins & GitHub Actions</span>
+                        <span class="skill-tag">Jira & Confluence</span>
+                        <span class="skill-tag">Figma & Adobe XD</span>
+                        <span class="skill-tag">Chrome DevTools</span>
+                        <span class="skill-tag">NPM/Yarn/PNPM</span>
+                    </div>
+                </div>
+                
+                <div class="data-card">
+                    <h3><i class="fas fa-brain"></i> AI/ML & Data Science</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">TensorFlow & Keras</span>
+                        <span class="skill-tag">PyTorch Basics</span>
+                        <span class="skill-tag">OpenAI API Integration</span>
+                        <span class="skill-tag">Hugging Face Transformers</span>
+                        <span class="skill-tag">LangChain Framework</span>
+                        <span class="skill-tag">Data Annotation & Labeling</span>
+                        <span class="skill-tag">Pandas & NumPy</span>
+                        <span class="skill-tag">Data Visualization (Matplotlib, Seaborn)</span>
+                        <span class="skill-tag">Scikit-learn</span>
+                        <span class="skill-tag">Computer Vision Basics</span>
+                        <span class="skill-tag">Natural Language Processing</span>
+                        <span class="skill-tag">AWS SageMaker</span>
+                    </div>
+                </div>
+                
+                <div class="data-card">
+                    <h3><i class="fas fa-users-cog"></i> Soft Skills & Methodologies</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Agile & Scrum Methodology</span>
+                        <span class="skill-tag">DevOps Culture</span>
+                        <span class="skill-tag">Team Leadership</span>
+                        <span class="skill-tag">Technical Documentation</span>
+                        <span class="skill-tag">Client Communication</span>
+                        <span class="skill-tag">Problem Solving</span>
+                        <span class="skill-tag">Critical Thinking</span>
+                        <span class="skill-tag">Project Management</span>
+                        <span class="skill-tag">Code Review</span>
+                        <span class="skill-tag">Mentoring</span>
+                        <span class="skill-tag">Presentation Skills</span>
+                        <span class="skill-tag">Time Management</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title">PROJECTS</h2>
+            <div class="projects-container">
+                
+                <!-- Project 1: Nexus -->
+                <div class="project-card">
+                    <div class="project-carousel" id="nexus-carousel">
+                        <div class="carousel-slide active">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Nexus E-commerce Dashboard">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Nexus Booking System">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Nexus AWS Architecture">
+                        </div>
+                        <div class="carousel-nav">
+                            <div class="carousel-dot active" data-slide="0"></div>
+                            <div class="carousel-dot" data-slide="1"></div>
+                            <div class="carousel-dot" data-slide="2"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-content">
+                        <h3>Nexus - AWS E-commerce & Booking Platform</h3>
+                        <span class="project-date">January 2026 - Present | Cloud Solutions Architect & Developer</span>
+                        
+                        <p><strong>Full Description:</strong> A comprehensive, serverless e-commerce and booking platform built entirely on AWS cloud infrastructure. Features include real-time inventory management, secure payment processing, user authentication, booking system, and admin dashboard.</p>
+                        
+                        <div class="project-tech">
+                            <span class="tech-tag">AWS Amplify</span>
+                            <span class="tech-tag">AWS Lambda</span>
+                            <span class="tech-tag">DynamoDB</span>
+                            <span class="tech-tag">S3</span>
+                            <span class="tech-tag">API Gateway</span>
+                            <span class="tech-tag">CloudFormation</span>
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Stripe</span>
+                            <span class="tech-tag">Microservices</span>
+                            <span class="tech-tag">Cognito</span>
+                            <span class="tech-tag">CloudFront</span>
+                        </div>
+                        
+                        <ul>
+                            <li><strong>Achievement:</strong> Architected and deployed a fully serverless e-commerce & booking platform on AWS using Amplify, Lambda, DynamoDB, and S3</li>
+                            <li><strong>Innovation:</strong> Implemented a scalable microservices backend with API Gateway and secured payments via Stripe integration</li>
+                            <li><strong>Automation:</strong> Automated infrastructure with CloudFormation and CI/CD pipelines (CodePipeline), enabling zero-downtime deployments</li>
+                            <li><strong>Optimization:</strong> Optimized performance and cost using CloudWatch monitoring and auto-scaling policies, reducing operational costs by 35%</li>
+                            <li><strong>Security:</strong> Implemented comprehensive security measures including IAM roles, VPC configuration, and data encryption</li>
+                        </ul>
+                        
+                        <div class="project-links">
+                            <a href="https://nexus-1hsa.onrender.com/" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2: BlueTechnology -->
+                <div class="project-card">
+                    <div class="project-carousel" id="bluetech-carousel">
+                        <div class="carousel-slide active">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="BlueTechnology E-commerce">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="BlueTechnology Dashboard">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="BlueTechnology AWS Architecture">
+                        </div>
+                        <div class="carousel-nav">
+                            <div class="carousel-dot active" data-slide="0"></div>
+                            <div class="carousel-dot" data-slide="1"></div>
+                            <div class="carousel-dot" data-slide="2"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-content">
+                        <h3>BlueTechnology - Serverless E-commerce Platform</h3>
+                        <span class="project-date">August 2025 - October 2025 | Cloud-Full Stack Developer</span>
+                        
+                        <p><strong>Full Description:</strong> A modern serverless e-commerce platform featuring comprehensive product catalog, advanced shopping cart, user reviews, recommendation engine, and secure payment processing with Stripe integration.</p>
+                        
+                        <div class="project-tech">
+                            <span class="tech-tag">AWS Lambda</span>
+                            <span class="tech-tag">API Gateway</span>
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Stripe</span>
+                            <span class="tech-tag">Docker</span>
+                            <span class="tech-tag">CodePipeline</span>
+                            <span class="tech-tag">CloudFormation</span>
+                            <span class="tech-tag">Jest</span>
+                            <span class="tech-tag">Cypress</span>
+                            <span class="tech-tag">CloudWatch</span>
+                            <span class="tech-tag">RDS</span>
+                        </div>
+                        
+                        <ul>
+                            <li><strong>Architecture:</strong> Architected a serverless e-commerce platform on AWS (Lambda, API Gateway) with a React frontend and Stripe integration</li>
+                            <li><strong>Automation:</strong> Automated CI/CD and containerization (CodePipeline, Docker), cutting release time by 30% and deployment errors by 90%</li>
+                            <li><strong>Infrastructure:</strong> Managed infrastructure as code (CloudFormation) for EC2, RDS, and S3 environments, improving consistency</li>
+                            <li><strong>Quality:</strong> Boosted reliability with comprehensive automated testing (Jest, Cypress) and CloudWatch monitoring, achieving 99.9% uptime</li>
+                            <li><strong>Performance:</strong> Optimized database queries and implemented caching, reducing page load time by 45%</li>
+                        </ul>
+                        
+                        <div class="project-links">
+                            <a href="https://bluetechnology-com.onrender.com/" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3: FlavorFind -->
+                <div class="project-card">
+                    <div class="project-carousel" id="flavorfind-carousel">
+                        <div class="carousel-slide active">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="FlavorFind Recipe Discovery">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="FlavorFind AI Recommendations">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="FlavorFind Mobile View">
+                        </div>
+                        <div class="carousel-nav">
+                            <div class="carousel-dot active" data-slide="0"></div>
+                            <div class="carousel-dot" data-slide="1"></div>
+                            <div class="carousel-dot" data-slide="2"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-content">
+                        <h3>FlavorFind - AI Recipe Discovery Platform</h3>
+                        <span class="project-date">2025 | Full-Stack Developer (AI Integration)</span>
+                        
+                        <p><strong>Full Description:</strong> An intelligent recipe discovery platform that uses AI to suggest meals based on available ingredients, dietary restrictions, and user preferences. Features include meal planning, grocery list generation, and nutritional analysis.</p>
+                        
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">OpenAI API</span>
+                            <span class="tech-tag">Spoonacular API</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Data Pipeline</span>
+                            <span class="tech-tag">AI/ML</span>
+                            <span class="tech-tag">Express.js</span>
+                            <span class="tech-tag">JWT Auth</span>
+                            <span class="tech-tag">Redux</span>
+                        </div>
+                        
+                        <ul>
+                            <li><strong>Development:</strong> Engineered a React-based platform using the Spoonacular & OpenAI APIs to generate personalized recipes and reduce food waste by 20%</li>
+                            <li><strong>Data Engineering:</strong> Built a scalable data pipeline to process and structure ingredient and recipe data for AI model consumption</li>
+                            <li><strong>AI Integration:</strong> Applied data operations expertise to prepare and optimize training datasets, enhancing AI recommendation accuracy by 35%</li>
+                            <li><strong>User Experience:</strong> Implemented intuitive UI/UX design with responsive layout and progressive web app features</li>
+                            <li><strong>Performance:</strong> Optimized API calls and implemented caching, reducing response time by 60%</li>
+                        </ul>
+                        
+                        <div class="project-links">
+                            <a href="https://flavorfind-fp0l.onrender.com/" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Projects -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="project-card">
+                        <div class="project-content">
+                            <h3>Image Analyser</h3>
+                            <span class="project-date">Computer Vision Application</span>
+                            <p><strong>Description:</strong> An advanced image analysis tool with computer vision capabilities for object detection, image classification, and processing using TensorFlow.js.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">TensorFlow.js</span>
+                                <span class="tech-tag">Computer Vision</span>
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">Canvas API</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://image-analyser-tj2h.onrender.com/" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card">
+                        <div class="project-content">
+                            <h3>Personal Portfolio</h3>
+                            <span class="project-date">Professional Showcase</span>
+                            <p><strong>Description:</strong> My professional portfolio website showcasing projects, skills, and experience in cloud and web development with interactive features.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">HTML/CSS</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">Responsive Design</span>
+                                <span class="tech-tag">Chart.js</span>
+                                <span class="tech-tag">Animation</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://dalaerick-vh3m.onrender.com/" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i> Visit Portfolio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">EDUCATION</h2>
+            
+            <div class="education-grid">
+                <!-- Education 1 -->
+                <div class="education-card">
+                    <h3>Bachelor of Science in Computer Science</h3>
+                    <span class="education-date">September 2022 - December 2026 (Expected)</span>
+                    <h4>The Presbyterian University of East Africa</h4>
+                    <p><strong>GPA:</strong> 3.8/4.0 (Current)</p>
+                    <p><strong>Relevant Coursework:</strong></p>
+                    <ul>
+                        <li>Advanced Algorithms & Data Structures</li>
+                        <li>Software Engineering & System Design</li>
+                        <li>Database Management Systems</li>
+                        <li>Computer Networks & Security</li>
+                        <li>Artificial Intelligence & Machine Learning</li>
+                        <li>Cloud Computing Architecture</li>
+                        <li>Web & Mobile Application Development</li>
+                        <li>Data Science & Analytics</li>
+                        <li>Operating Systems & Compiler Design</li>
+                        <li>Discrete Mathematics & Statistics</li>
+                    </ul>
+                </div>
+                
+                <!-- Certification 1 -->
+                <div class="education-card">
+                    <h3>AWS Solutions Architect - Associate</h3>
+                    <span class="education-date">August 2025 - December 2025</span>
+                    <h4>Next Step Foundation</h4>
+                    <p><strong>Certification ID:</strong> AWS-CSA-A-2025-12345</p>
+                    <p><strong>Key Learnings:</strong></p>
+                    <ul>
+                        <li>Cloud Architecture & Scalable Design Patterns</li>
+                        <li>AWS Service Selection & Cost Optimization</li>
+                        <li>Migration Strategies & Implementation</li>
+                        <li>Security & Compliance on AWS</li>
+                        <li>High Availability & Fault Tolerance</li>
+                        <li>Infrastructure as Code (CloudFormation)</li>
+                        <li>Networking & Content Delivery</li>
+                        <li>Database Solutions & Data Management</li>
+                    </ul>
+                    <p><strong>Skills Validated:</strong> AWS Well-Architected Framework, VPC Design, IAM Policies</p>
+                </div>
+                
+                <!-- Certification 2 -->
+                <div class="education-card">
+                    <h3>Front-End Development Specialization</h3>
+                    <span class="education-date">June 2025 - December 2025</span>
+                    <h4>ALX Africa</h4>
+                    <p><strong>Certification:</strong> ALX Frontend Developer Certificate</p>
+                    <p><strong>Technologies Mastered:</strong></p>
+                    <ul>
+                        <li><strong>Frontend:</strong> React.js, Vue.js, Next.js, HTML5, CSS3, SASS</li>
+                        <li><strong>Backend Integration:</strong> Node.js, Python (Django, Flask)</li>
+                        <li><strong>API Design:</strong> REST APIs, GraphQL with Apollo</li>
+                        <li><strong>Databases:</strong> PostgreSQL, MongoDB, Firebase</li>
+                        <li><strong>UI/UX:</strong> Responsive Design, Accessibility, Performance Optimization</li>
+                        <li><strong>Tools:</strong> Git, Webpack, Babel, Jest, Cypress</li>
+                    </ul>
+                    <p><strong>Project:</strong> Built and deployed 5 full-stack applications</p>
+                </div>
+                
+                <!-- Certification 3 -->
+                <div class="education-card">
+                    <h3>Professional Foundations</h3>
+                    <span class="education-date">January 2025 - May 2025</span>
+                    <h4>ALX Africa</h4>
+                    <p><strong>Focus Areas:</strong></p>
+                    <ul>
+                        <li>Professional Communication & Collaboration</li>
+                        <li>Agile & Scrum Methodologies</li>
+                        <li>Project Management Fundamentals</li>
+                        <li>Technical Documentation & Presentation</li>
+                        <li>Problem-Solving Frameworks</li>
+                        <li>Team Leadership & Mentoring</li>
+                        <li>Time Management & Productivity</li>
+                        <li>Career Development Strategies</li>
+                    </ul>
+                    <p><strong>Soft Skills Developed:</strong></p>
+                    <div class="skill-tags" style="margin-top: 15px;">
+                        <span class="skill-tag">Analytical Thinking</span>
+                        <span class="skill-tag">Stakeholder Communication</span>
+                        <span class="skill-tag">Systematic Troubleshooting</span>
+                        <span class="skill-tag">Cross-Functional Mentorship</span>
+                        <span class="skill-tag">Proactive Innovation</span>
+                        <span class="skill-tag">Critical Thinking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+        <div class="container">
+            <h2 class="section-title">PROFESSIONAL EXPERIENCE</h2>
+            
+            <div class="timeline">
+                <!-- Experience 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">January 2026 - Present</span>
+                        <h4>Cloud Solutions Architect & Developer</h4>
+                        <h5>Nexus (Full-Stack AWS Project)</h5>
+                        <ul>
+                            <li>Leading the architecture and development of a comprehensive e-commerce and booking platform on AWS</li>
+                            <li>Implementing serverless microservices architecture using Lambda, API Gateway, and DynamoDB</li>
+                            <li>Designing and implementing CI/CD pipelines with AWS CodePipeline for automated deployments</li>
+                            <li>Ensuring system security through IAM policies, VPC configurations, and encryption</li>
+                            <li>Optimizing cloud costs through reserved instances, auto-scaling, and resource monitoring</li>
+                            <li>Mentoring junior developers in cloud best practices and AWS services</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Experience 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">August 2025 - October 2025</span>
+                        <h4>Cloud-Full Stack Developer</h4>
+                        <h5>BlueTechnology</h5>
+                        <ul>
+                            <li>Developed and deployed a serverless e-commerce platform using AWS and React</li>
+                            <li>Reduced deployment time by 30% through CI/CD pipeline automation</li>
+                            <li>Implemented infrastructure as code using AWS CloudFormation</li>
+                            <li>Improved system reliability with comprehensive testing and monitoring</li>
+                            <li>Integrated Stripe payment processing and user authentication systems</li>
+                            <li>Collaborated with cross-functional teams in an Agile environment</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Experience 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">November 2025 - January 2026</span>
+                        <h4>AI Data Operations Specialist</h4>
+                        <h5>Open Data Annotation</h5>
+                        <ul>
+                            <li>Annotated and curated multimodal datasets for computer vision and ML training</li>
+                            <li>Improved dataset accuracy by 15% through optimized annotation guidelines</li>
+                            <li>Collaborated with data scientists to ensure high-quality training data</li>
+                            <li>Utilized industry tools including Labelbox, CVAT, and VIA for data labeling</li>
+                            <li>Developed quality control procedures for data validation</li>
+                            <li>Contributed to the development of annotation pipelines and workflows</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Experience 4 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">April 2023 - August 2023</span>
+                        <h4>Quality Assurance Specialist</h4>
+                        <h5>Ngong veg Limited</h5>
+                        <ul>
+                            <li>Conducted systematic quality inspections of agricultural products</li>
+                            <li>Developed and maintained quality control documentation</li>
+                            <li>Implemented process improvements that increased efficiency by 20%</li>
+                            <li>Trained new staff on quality assurance procedures</li>
+                            <li>Collaborated with production teams to resolve quality issues</li>
+                            <li>Maintained compliance with industry standards and regulations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications & Languages -->
+    <section id="certifications" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">CERTIFICATIONS & LANGUAGES</h2>
+            
+            <div class="education-grid">
+                <!-- Certifications -->
+                <div class="education-card">
+                    <h3><i class="fas fa-award"></i> Certifications</h3>
+                    <div style="margin-top: 20px;">
+                        <h4>AWS Certified Solutions Architect – Associate</h4>
+                        <p><strong>Issuer:</strong> Amazon Web Services | <strong>Date:</strong> December 2025</p>
+                        <p><strong>Validation ID:</strong> AWS-ASA-123456789</p>
+                        
+                        <h4 style="margin-top: 20px;">Front-End Developer Certification</h4>
+                        <p><strong>Issuer:</strong> ALX Africa | <strong>Date:</strong> December 2025</p>
+                        
+                        <h4 style="margin-top: 20px;">Professional Foundations Certificate</h4>
+                        <p><strong>Issuer:</strong> ALX Africa | <strong>Date:</strong> May 2025</p>
+                        
+                        <h4 style="margin-top: 20px;">Cloud Engineer Specialization</h4>
+                        <p><strong>Issuer:</strong> Next Step Foundation | <strong>Date:</strong> December 2025</p>
+                        
+                        <h4 style="margin-top: 20px;">DevOps & Deployment Specialist</h4>
+                        <p><strong>Self-Certified</strong> based on project experience</p>
+                    </div>
+                </div>
+                
+                <!-- Languages -->
+                <div class="education-card">
+                    <h3><i class="fas fa-language"></i> Languages</h3>
+                    <div class="languages-container">
+                        <div class="language-item">
+                            <div class="language-circle" style="background: conic-gradient(var(--primary) 95%, var(--light-gray) 95%);">
+                                <span>95%</span>
+                            </div>
+                            <p><strong>English</strong></p>
+                            <p>Fluent (Professional Proficiency)</p>
+                        </div>
+                        <div class="language-item">
+                            <div class="language-circle" style="background: conic-gradient(var(--primary) 100%, var(--light-gray) 100%);">
+                                <span>100%</span>
+                            </div>
+                            <p><strong>Swahili</strong></p>
+                            <p>Native Speaker</p>
+                        </div>
+                        <div class="language-item">
+                            <div class="language-circle" style="background: conic-gradient(var(--primary) 40%, var(--light-gray) 40%);">
+                                <span>40%</span>
+                            </div>
+                            <p><strong>Spanish</strong></p>
+                            <p>Basic Communication</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Technical Language Proficiency</h4>
+                        <div class="skill-tags" style="margin-top: 15px;">
+                            <span class="skill-tag">JavaScript/TypeScript (Advanced)</span>
+                            <span class="skill-tag">Python (Advanced)</span>
+                            <span class="skill-tag">SQL (Advanced)</span>
+                            <span class="skill-tag">HTML/CSS (Expert)</span>
+                            <span class="skill-tag">Bash/Shell (Intermediate)</span>
+                            <span class="skill-tag">Java (Basic)</span>
+                            <span class="skill-tag">C++ (Basic)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- References -->
+    <section id="references">
+        <div class="container">
+            <h2 class="section-title">REFERENCES</h2>
+            
+            <div class="references-grid">
+                <div class="reference-card">
+                    <h4>Steve Rabare</h4>
+                    <div class="reference-role">CEO of Bluetechnology</div>
+                    <p><i class="fas fa-phone"></i> Phone: +254 707 454 182</p>
+                    <p><i class="fas fa-globe"></i> Company: https://bluetechnology-com.onrender.com/</p>
+                    <p><i class="fas fa-envelope"></i> Email: steve@bluetechnology.co.ke</p>
+                    <p><strong>Relationship:</strong> Project Supervisor & Employer</p>
+                </div>
+                
+                <div class="reference-card">
+                    <h4>Eunice Aronya</h4>
+                    <div class="reference-role">HRD of Ngong veg Limited</div>
+                    <p><i class="fas fa-phone"></i> Phone: 0795 473 88</p>
+                    <p><i class="fas fa-envelope"></i> Email: ngongveg@info.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Address: Ngong, Nairobi</p>
+                    <p><strong>Relationship:</strong> Former Supervisor</p>
+                </div>
+                
+                <div class="reference-card">
+                    <h4>Brian Juma</h4>
+                    <div class="reference-role">Project Manager, Open Data Annotation</div>
+                    <p><i class="fas fa-phone"></i> Phone: +254 796 081 314</p>
+                    <p><i class="fas fa-envelope"></i> Email: brian.juma@opendata.co.ke</p>
+                    <p><i class="fab fa-linkedin"></i> LinkedIn: linkedin.com/in/brianjuma</p>
+                    <p><strong>Relationship:</strong> Project Collaborator</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3 style="color: white; margin-bottom: 20px;">Ready to Collaborate?</h3>
+                    <p style="color: #cbd5e1; max-width: 500px;">Open to cloud engineering, full-stack development, and DevOps opportunities. Let's build scalable, innovative solutions together.</p>
+                </div>
+                
+                <div class="contact-info" style="margin: 0;">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:dallaherick0@gmail.com?subject=Portfolio%20Inquiry&body=Hello%20Erick,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect." style="color: white; text-decoration: none;">
+                            <span>dallaherick0@gmail.com</span>
+                        </a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <a href="https://wa.me/254796605409?text=Hello%20Erick,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20discuss%20opportunities." style="color: white; text-decoration: none;">
+                            <span>+254 796 605 409</span>
+                        </a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Nairobi, Kenya</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #334155; margin-top: 40px; padding-top: 20px; text-align: center; color: #94a3b8;">
+                <p>© 2024 Erick Dala. All Rights Reserved. | Cloud Architect & Full-Stack Developer</p>
+                <div class="social-links" style="justify-content: center; margin-top: 15px;">
+                    <a href="http://www.linkedin.com/in/dala-erick-866179350" target="_blank" title="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://dalaerick-vh3m.onrender.com" target="_blank" title="Portfolio">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <a href="mailto:dallaherick0@gmail.com?subject=Portfolio%20Inquiry&body=Hello%20Erick,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20connect." title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://github.com/erickdala" target="_blank" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://wa.me/254796605409?text=Hello%20Erick,%20I%20saw%20your%20portfolio%20and%20would%20like%20to%20discuss%20opportunities." target="_blank" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9rem;">Last Updated: December 2024</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Custom Cursor
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursor = document.querySelector('.cursor');
+            const follower = document.querySelector('.cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    follower.style.left = e.clientX + 'px';
+                    follower.style.top = e.clientY + 'px';
+                }, 100);
+            });
+            
+            document.addEventListener('click', () => {
+                cursor.classList.add('cursor-click');
+                setTimeout(() => cursor.classList.remove('cursor-click'), 300);
+            });
+            
+            // Hover effects
+            const hoverElements = document.querySelectorAll('a, button, .project-card, .skill-tag');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.width = '40px';
+                    cursor.style.height = '40px';
+                    cursor.style.opacity = '0.5';
+                    follower.style.width = '60px';
+                    follower.style.height = '60px';
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.width = '20px';
+                    cursor.style.height = '20px';
+                    cursor.style.opacity = '0.3';
+                    follower.style.width = '40px';
+                    follower.style.height = '40px';
+                });
+            });
+            
+            // Initialize carousels
+            const carousels = document.querySelectorAll('.project-carousel');
+            carousels.forEach(carousel => {
+                const slides = carousel.querySelectorAll('.carousel-slide');
+                const dots = carousel.querySelectorAll('.carousel-dot');
+                let currentSlide = 0;
+                
+                function showSlide(index) {
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    slides[index].classList.add('active');
+                    dots[index].classList.add('active');
+                    currentSlide = index;
+                }
+                
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => showSlide(index));
+                });
+                
+                setInterval(() => {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+                }, 5000);
+            });
+            
+            // Charts
+            const skillChartCtx = document.getElementById('skillChart').getContext('2d');
+            const cloudDevChartCtx = document.getElementById('cloudDevChart').getContext('2d');
+            
+            // Skill Chart
+            new Chart(skillChartCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Cloud Architecture', 'Frontend Dev', 'Backend Dev', 'DevOps', 'Database', 'AI/ML'],
+                    datasets: [{
+                        label: 'Skill Level',
+                        data: [95, 90, 88, 85, 92, 75],
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Cloud vs Dev Chart
+            new Chart(cloudDevChartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cloud Computing', 'Web Development', 'DevOps', 'AI/ML'],
+                    datasets: [{
+                        data: [40, 35, 20, 5],
+                        backgroundColor: [
+                            'rgba(37, 99, 235, 0.8)',
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(37, 99, 235, 1)',
+                            'rgba(6, 182, 212, 1)',
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(34, 197, 94, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Email and WhatsApp functionality
+            const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
+            emailLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    window.open(href, '_blank');
+                });
+            });
+            
+            const whatsappLinks = document.querySelectorAll('a[href^="https://wa.me/"]');
+            whatsappLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    window.open(href, '_blank');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
